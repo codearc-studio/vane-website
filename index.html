@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="en">
 <head>
-
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="format-detection" content="telephone=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#c9e7fb">
+
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -42,128 +42,209 @@
 <nav>
   <div class="shell">
     <div class="nav glass">
-      <a href="./" class="brand"><img src="assets/vane-logo.webp" class="brand-mark" alt="" aria-hidden="true"><span>Vane</span></a>
+      <a href="./" class="brand" aria-label="Vane home">
+        <img src="assets/vane-logo.webp" class="brand-mark" alt="">
+        <span>Vane</span>
+      </a>
       <div class="navlinks">
         <a class="navlink" href="#sense">Sense</a>
+        <a class="navlink" href="#privacy">Privacy</a>
         <a class="navlink" href="contact/">Contact</a>
-        <a class="pill primary" href="#coming-soon">Coming soon</a>
+        <a class="pill primary nav-cta" href="#coming-soon">Coming soon</a>
       </div>
     </div>
   </div>
 </nav>
 
-<main><div class="shell">
+<main>
+  <div class="shell">
 
-<section class="hero">
-  <div class="heroin reveal">
-    <img src="assets/vane-logo.webp" class="hero-logo" alt="Vane">
-    <div class="eyebrow">Coming soon to iPhone</div>
-    <h1>Vane<span>Weather, the way it feels to you.</span></h1>
-    <p>We all experience weather differently. Vane learns what different conditions feel like to you, so your forecast becomes more useful the more you use it. All the weather information you expect is still there when you want it.</p>
-    <div class="actions">
-      <a class="pill primary" href="#why">Discover Vane</a>
-      <a class="pill" href="#sense">How it learns</a>
+    <section class="hero">
+      <div class="hero-ribbon" aria-hidden="true"></div>
+      <div class="heroin reveal">
+        <img src="assets/vane-logo.webp" class="hero-logo" alt="Vane">
+        <div class="eyebrow">Coming soon to iPhone</div>
+        <h1>Weather, the way it feels to you.</h1>
+        <p>We all experience weather differently. Vane learns how different conditions feel to you, then makes the forecast easier to understand without hiding the details.</p>
+        <div class="actions">
+          <a class="pill primary" href="#sense">Meet Sense</a>
+          <a class="pill" href="#why">Why Vane</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="why" class="reveal">
+      <div class="statement glass">
+        <div class="statement-copy">
+          <div class="kicker">Why Vane</div>
+          <p class="big">Weather is not one-size-fits-all.</p>
+          <p class="small">A temperature can feel chilly to one person and warm to another. Vane adds a personal layer to the forecast so the numbers mean more to you.</p>
+        </div>
+        <div class="comfort-scale" aria-label="Illustrative comfort scale">
+          <span>Cold</span>
+          <div class="scale-track"><i></i></div>
+          <span>Warm</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="benefits reveal">
+      <div class="section-head">
+        <div>
+          <div class="kicker">More useful weather</div>
+          <h2>Familiar weather, with a personal point of view.</h2>
+        </div>
+        <p class="lede">Vane keeps the forecast you expect, then gives the conditions more context.</p>
+      </div>
+
+      <div class="benefit-grid">
+        <article class="benefit glass">
+          <div class="benefit-visual feel-visual" aria-hidden="true">
+            <div class="feel-pill">Chilly</div>
+            <div class="feel-pill active">Comfortable</div>
+            <div class="feel-pill">Warm</div>
+          </div>
+          <div>
+            <h3>Personal feel</h3>
+            <p>See how the weather is likely to feel to you, not just the raw temperature.</p>
+          </div>
+        </article>
+
+        <article class="benefit glass">
+          <div class="benefit-visual guidance-visual" aria-hidden="true">
+            <div class="guidance-line"><b>Rain</b><span>Later this evening</span></div>
+            <div class="guidance-line"><b>UV</b><span>Sunscreen recommended</span></div>
+          </div>
+          <div>
+            <h3>Clear guidance</h3>
+            <p>Useful language sits alongside the forecast when it helps you make a decision.</p>
+          </div>
+        </article>
+
+        <article class="benefit glass">
+          <div class="benefit-visual detail-visual" aria-hidden="true">
+            <span>72°</span><span>48%</span><span>UV 6</span><span>8 mph</span>
+          </div>
+          <div>
+            <h3>Still a full forecast</h3>
+            <p>Temperature, rain, wind, humidity, UV, air quality and the rest stay available.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+  </div>
+
+  <section id="sense" class="sense-stage reveal">
+    <div class="shell">
+      <div class="sense-heading">
+        <div>
+          <div class="kicker light">Sense</div>
+          <h2>Vane gets more familiar with you over time.</h2>
+        </div>
+        <p>Sense learns from simple check-ins. It remembers the conditions you have experienced and gets better at describing what comes next.</p>
+      </div>
+
+      <div class="sense-grid">
+        <article class="sense-panel sense-copy">
+          <div>
+            <span class="sense-label">Check in when it matters</span>
+            <h3>One quick answer can teach Vane something useful.</h3>
+            <p>Vane can occasionally ask how the weather feels when the answer would help. You can also check in anytime yourself.</p>
+          </div>
+          <div class="sense-chips">
+            <span>Smart check-ins</span>
+            <span>Check in anytime</span>
+            <span>Adapts with the seasons</span>
+          </div>
+        </article>
+
+        <article class="sense-panel calibration-panel">
+          <div class="calibration-top">
+            <div>
+              <span class="sense-label">Your calibration</span>
+              <h3>Where Vane knows you well.</h3>
+            </div>
+            <span class="calibration-status">Still learning</span>
+          </div>
+
+          <div class="calibration-axes">
+            <span>Cooler</span><span>Temperature</span><span>Warmer</span>
+          </div>
+          <div class="calibration-field" aria-label="Abstract Vane calibration visualization">
+            <span class="cell a1"></span><span class="cell a1"></span><span class="cell a0"></span><span class="cell a0"></span><span class="cell a0"></span><span class="cell a0"></span><span class="cell a0"></span>
+            <span class="cell a2"></span><span class="cell a2"></span><span class="cell a1"></span><span class="cell a1"></span><span class="cell a0"></span><span class="cell a0"></span><span class="cell a0"></span>
+            <span class="cell a3"></span><span class="cell a4"></span><span class="cell a4"></span><span class="cell a3"></span><span class="cell a2"></span><span class="cell a1"></span><span class="cell a0"></span>
+            <span class="cell a3"></span><span class="cell a4"></span><span class="cell a4"></span><span class="cell a4"></span><span class="cell a3"></span><span class="cell a2"></span><span class="cell a1"></span>
+            <span class="cell a2"></span><span class="cell a3"></span><span class="cell a4"></span><span class="cell a3"></span><span class="cell a2"></span><span class="cell a1"></span><span class="cell a0"></span>
+            <span class="cell a1"></span><span class="cell a2"></span><span class="cell a2"></span><span class="cell a1"></span><span class="cell a0"></span><span class="cell a0"></span><span class="cell a0"></span>
+          </div>
+          <div class="calibration-bottom"><span>More familiar</span><span>Needs more experience</span></div>
+          <p class="calibration-note">Vane keeps what it has learned, while refreshing conditions that may feel different as the seasons change.</p>
+        </article>
+      </div>
     </div>
-  </div>
-  <div class="atmos" aria-hidden="true">
-    <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
-  </div>
-</section>
+  </section>
 
-<section id="why" class="reveal">
-  <div class="statement glass">
-    <p class="big">Weather is not one-size-fits-all.</p>
-    <p class="small">The same temperature can feel chilly to one person, comfortable to another, and warm to someone else. Vane is built around that simple idea.</p>
-  </div>
-</section>
-
-<section class="reveal">
-  <div class="kicker">More useful weather</div>
-  <h2>A forecast that means something to you.</h2>
-  <p class="lede">Vane keeps the familiar parts of a weather app, then adds a personal layer that helps explain what the conditions are likely to feel like.</p>
-  <div class="grid">
-    <article class="card glass">
-      <div class="num">01</div>
-      <div><h3>Personal feel</h3><p>Vane learns how you experience different temperatures and conditions, then uses that understanding throughout your forecast.</p></div>
-    </article>
-    <article class="card glass">
-      <div class="num">02</div>
-      <div><h3>Clear guidance</h3><p>See useful language alongside the numbers, whether it is rain later, strong UV, or weather that is likely to feel warmer or cooler to you.</p></div>
-    </article>
-    <article class="card glass">
-      <div class="num">03</div>
-      <div><h3>Still a full forecast</h3><p>Temperature, rain, wind, humidity, UV, air quality and the rest stay available whenever you want the details.</p></div>
-    </article>
-  </div>
-</section>
-
-<section id="sense" class="reveal">
-  <div class="kicker">Sense</div>
-  <h2>Vane gets more familiar with you over time.</h2>
-  <p class="lede">Sense is the name for the part of Vane that learns from your check-ins. The more Vane sees how different weather feels to you, the better it can personalize what comes next.</p>
-  <div class="sense">
-    <article class="sensebox sensecopy glass">
-      <div>
-        <h3>Check in when it is useful.</h3>
-        <p>Vane can occasionally ask how the weather feels when a check-in would actually help. You can also check in yourself anytime if you notice something worth teaching Vane.</p>
+  <div class="shell">
+    <section class="process reveal">
+      <div class="section-head compact">
+        <div>
+          <div class="kicker">How it works</div>
+          <h2>Simple check-ins. Better forecasts.</h2>
+        </div>
       </div>
-      <div class="chips">
-        <span class="chip">Smart check-ins</span>
-        <span class="chip">Check in anytime</span>
-        <span class="chip">Keeps learning</span>
-        <span class="chip">Adapts with the seasons</span>
+
+      <div class="steps glass">
+        <div class="step">
+          <span>1</span>
+          <div><h3>Start with what you know</h3><p>A few quick questions give Vane a useful starting point.</p></div>
+        </div>
+        <div class="step-arrow" aria-hidden="true">→</div>
+        <div class="step">
+          <span>2</span>
+          <div><h3>Check in sometimes</h3><p>Answer when the weather is worth learning from. Skip whenever you want.</p></div>
+        </div>
+        <div class="step-arrow" aria-hidden="true">→</div>
+        <div class="step">
+          <span>3</span>
+          <div><h3>Let Vane adapt</h3><p>Your forecast becomes more familiar as Vane experiences more conditions with you.</p></div>
+        </div>
       </div>
-    </article>
-    <article class="sensebox glass">
-      <div class="kicker">Your calibration</div>
-      <div class="field" aria-label="Abstract calibration visualization">
-        <span class="cell s1"></span><span class="cell s1"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span>
-        <span class="cell s2"></span><span class="cell s2"></span><span class="cell s1"></span><span class="cell s1"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span>
-        <span class="cell s3"></span><span class="cell s4"></span><span class="cell s4"></span><span class="cell s3"></span><span class="cell s2"></span><span class="cell s1"></span><span class="cell"></span>
-        <span class="cell s3"></span><span class="cell s4"></span><span class="cell s4"></span><span class="cell s4"></span><span class="cell s3"></span><span class="cell s2"></span><span class="cell s1"></span>
-        <span class="cell s2"></span><span class="cell s3"></span><span class="cell s4"></span><span class="cell s3"></span><span class="cell s2"></span><span class="cell s1"></span><span class="cell"></span>
-        <span class="cell s1"></span><span class="cell s2"></span><span class="cell s2"></span><span class="cell s1"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span>
+    </section>
+
+    <section id="privacy" class="reveal">
+      <div class="privacy glass">
+        <div>
+          <div class="kicker">Privacy</div>
+          <h2>Your weather should feel personal, not invasive.</h2>
+        </div>
+        <div class="privacy-copy">
+          <p>Vane is being designed with privacy in mind from the start. Your personal weather experience exists to make the app more useful to you, and you stay in control of it.</p>
+          <div class="points">
+            <span>Private by design</span>
+            <span>You stay in control</span>
+            <span>Clear settings</span>
+          </div>
+        </div>
       </div>
-      <div class="axis"><span>More familiar</span><span>Still learning</span></div>
-      <p class="note">As Vane experiences more kinds of weather with you, your calibration becomes more complete and future forecasts can feel more familiar.</p>
-    </article>
-  </div>
-</section>
+    </section>
 
-<section class="reveal">
-  <div class="kicker">How it works</div>
-  <h2>Simple check-ins. Better forecasts.</h2>
-  <p class="lede">You do not need to teach Vane everything at once. It starts with a rough idea, then improves naturally as you use it.</p>
-  <div class="grid">
-    <article class="card glass"><div class="num">01</div><div><h3>Start with what you know</h3><p>A few quick questions can give Vane a starting point. Anything you are not sure about can be skipped.</p></div></article>
-    <article class="card glass"><div class="num">02</div><div><h3>Check in sometimes</h3><p>When the weather is useful to learn from, Vane can ask how it feels. One quick answer is enough.</p></div></article>
-    <article class="card glass"><div class="num">03</div><div><h3>Let Vane adapt</h3><p>As the seasons change and you experience more conditions, Vane keeps refining the way it describes your forecast.</p></div></article>
+    <section id="coming-soon" class="launch reveal">
+      <div class="launch-card">
+        <img src="assets/vane-logo.webp" alt="" class="launch-mark">
+        <div class="kicker light">Vane Weather</div>
+        <h2>A forecast that feels more like yours.</h2>
+        <p>Coming soon to iPhone.</p>
+        <span class="pill launch-pill">Coming soon</span>
+      </div>
+    </section>
   </div>
-</section>
-
-<section class="reveal">
-  <div class="privacy glass">
-    <div class="kicker">Privacy</div>
-    <h2>Your weather should feel personal, not invasive.</h2>
-    <p>Vane is being designed with privacy in mind from the start. Your personal weather experience is there to make the app more useful to you, and you stay in control of it.</p>
-    <div class="points"><span>Private by design</span><span>You stay in control</span><span>Clear, simple settings</span></div>
-  </div>
-</section>
-
-<section id="coming-soon" class="cta reveal">
-  <div class="ctabox glass">
-    <div class="kicker">Vane Weather</div>
-    <h2>A forecast that feels more like yours.</h2>
-    <p>Vane is still taking shape. The idea is simple: weather that becomes easier to understand because it gets to know the way you experience it.</p>
-    <span class="pill primary">Coming soon to iPhone</span>
-  </div>
-</section>
-
-</div></main>
+</main>
 
 <footer>
   <div class="shell footer">
-    <span>© 2026 Vane</span>
+    <a class="footer-brand" href="./"><img src="assets/vane-logo.webp" alt=""><span>Vane</span></a>
     <div class="footerlinks">
       <a href="contact/">Contact</a>
       <a href="privacy/">Privacy</a>
@@ -176,4 +257,3 @@
 <script src="site.js"></script>
 </body>
 </html>
-
