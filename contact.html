@@ -3,9 +3,11 @@
 <head>
 
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#c9e7fb">
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="styles.css">
 
 <title>Contact | Vane</title>
 <meta name="description" content="Contact Vane support and the CodeArc.studio team.">
@@ -15,11 +17,11 @@
 <nav>
   <div class="shell">
     <div class="nav glass">
-      <a href="/" class="brand">Vane</a>
+      <a href="./" class="brand">Vane</a>
       <div class="navlinks">
-        <a class="navlink" href="/#sense">Sense</a>
-        <a class="navlink" href="/contact">Contact</a>
-        <a class="pill primary" href="/#coming-soon">Coming soon</a>
+        <a class="navlink" href="./#sense">Sense</a>
+        <a class="navlink" href="contact/">Contact</a>
+        <a class="pill primary" href="./#coming-soon">Coming soon</a>
       </div>
     </div>
   </div>
@@ -64,40 +66,16 @@
     </aside>
 
     <div class="contactform glass">
-      <div class="kicker">Send a message</div>
-      <h2>Tell us a little more.</h2>
-      <p>This form opens your email app with everything filled in, so you stay in control of what gets sent.</p>
+      <div class="kicker">Email us</div>
+      <h2>Get in touch.</h2>
+      <p>If you have a question, feedback, a privacy request, or anything else about Vane, send us an email.</p>
 
-      <form id="contact-form">
-        <div class="formgrid">
-          <div class="fieldwrap">
-            <label for="name">Name</label>
-            <input id="name" name="name" autocomplete="name" placeholder="Your name">
-          </div>
-          <div class="fieldwrap">
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com">
-          </div>
-          <div class="fieldwrap full">
-            <label for="topic">What is this about?</label>
-            <select id="topic" name="topic">
-              <option>App Support</option>
-              <option>Privacy and Data</option>
-              <option>Feedback and Ideas</option>
-              <option>Press and Partnerships</option>
-              <option>General</option>
-            </select>
-          </div>
-          <div class="fieldwrap full">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" required placeholder="Tell us what is going on..."></textarea>
-          </div>
-        </div>
-        <div class="submitrow">
-          <span class="helper">Your message is sent through your own email app.</span>
-          <button class="pill primary" type="submit">Continue to email</button>
-        </div>
-      </form>
+      <a class="email-cta" href="mailto:contact@codearc.studio">
+        <span class="email-label">contact@codearc.studio</span>
+        <span class="email-arrow">↗</span>
+      </a>
+
+      <p class="helper" style="margin-top:18px;">This opens your default email app.</p>
     </div>
   </section>
 </main>
@@ -106,14 +84,14 @@
   <div class="shell footer">
     <span>© 2026 Vane</span>
     <div class="footerlinks">
-      <a href="/contact">Contact</a>
-      <a href="/privacy">Privacy</a>
-      <a href="/terms">Terms</a>
+      <a href="contact/">Contact</a>
+      <a href="privacy/">Privacy</a>
+      <a href="terms/">Terms</a>
     </div>
     <div class="credit">Made by <a href="https://codearc.studio" target="_blank" rel="noopener noreferrer">CodeArc.studio</a></div>
   </div>
 </footer>
 
-<script src="/site.js"></script>
+<script src="site.js"></script>
 </body>
 </html>
