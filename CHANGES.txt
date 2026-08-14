@@ -1,53 +1,40 @@
-Vane full site package
+Vane website final update
 
-This package includes BOTH of the latest site updates.
-
-UPDATE 1 — Website polish
-Changed:
+CHANGED
 - index.html
+- styles.css
 - contact.html
-- privacy.html
-- terms.html
 - contact/index.html
+- privacy.html
 - privacy/index.html
+- terms.html
 - terms/index.html
-- styles.css
-- site.js
+- README.txt
 
-Added/updated:
-- favicon.ico
-- favicon.png
-- apple-touch-icon.png
-
-What changed:
-- Transparent Vane favicon added to every page
-- Apple touch icon added to every page
-- Custom Vane scrollbar
-- Vane-blue text selection highlight
-- Subtle mobile tap highlight
-- Thin scroll progress bar across the top
-- Contact page copy/content was not rewritten
-
-UPDATE 2 — Glass weather vane
-Changed:
-- index.html
-- styles.css
-
-Added:
-- assets/glass-vane.webp
-- assets/glass-vane.jpg
-
-What changed:
-- Glass weather vane added as the main homepage hero visual
-- A quiet, faded glass-vane treatment added to the footer
-- Responsive behavior added for desktop/tablet/mobile
-
-FULL SITE ASSETS INCLUDED
+USED / PRESERVED
+- assets/glass-vane.png
 - assets/vane-logo.png
 - assets/vane-logo.webp
-- og.png (the user's current 1200x630 OG image)
 - favicon.ico
 - favicon.png
 - apple-touch-icon.png
+- og.png
+- site.js
 
-Deploy the contents of the vane-website folder as your complete site.
+WHAT CHANGED
+- Hero now uses the real transparent assets/glass-vane.png
+- Glass vane is faded and blended into the hero with a soft atmospheric glow
+- Removed accumulated/conflicting old glass-vane CSS overrides
+- Fixed the visible horizontal seam in the dark launch-card gradient
+- Added a very subtle transparent glass vane in the footer
+- Contact page is now email-only, with one mailto link and no form-like UI
+- Improved homepage meta description and Open Graph description lengths
+- Added complete Open Graph / Twitter image metadata to Contact, Privacy, and Terms
+- Added canonical URLs and consistent favicon / Apple touch icon metadata
+- Preserved the existing Privacy Policy and Terms of Use legal copy
+- Kept the custom scrollbar, Vane selection color, mobile tap highlight, and scroll progress bar
+
+OG IMAGE
+- The current og.png is preserved visually.
+- It is already under 1 MB in this project, so the previous "image file is heavy" warning should be resolved.
+- "Image is missing conversion text" is a marketing recommendation from the inspector, not a broken meta tag.

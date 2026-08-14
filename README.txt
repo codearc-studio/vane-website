@@ -1,11 +1,9 @@
 Vane website
 Live domain: https://vane.codearc.studio
 
-GitHub Pages:
-- Publish from main branch, /(root)
-- CNAME is already included
-- .nojekyll is already included
-- Add og.png at the repository root before publishing
+Hosting:
+- GitHub is the source repository
+- Vercel deploys automatically from the repository
 
 Pages:
 - /
@@ -13,4 +11,16 @@ Pages:
 - /privacy/
 - /terms/
 
-The contact form uses mailto and opens the visitor's email app.
+Local testing:
+1. cd into the vane-website folder
+2. Run: python3 -m http.server
+3. Open: http://localhost:8000
+
+Deploy:
+git add .
+git commit -m "Update Vane website"
+git push
+
+Note:
+This ZIP intentionally does not include the .git folder. Copy/replace these files
+inside your existing Git repository so your Git history and remote stay intact.

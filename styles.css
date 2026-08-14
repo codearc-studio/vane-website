@@ -243,9 +243,10 @@ footer{padding:0 0 34px;color:var(--soft);font-size:13px}
   .contactform,.contactside{padding:26px 22px;border-radius:24px}
 }
 
-/* -------------------------------------------------------
-   Vane site polish + glass vane brand visual
-   ------------------------------------------------------- */
+
+/* =======================================================
+   Vane final site polish
+   ======================================================= */
 
 ::selection{
   background:rgba(43,127,255,.24);
@@ -294,14 +295,14 @@ html{
   transform:scaleX(0);
   transform-origin:left center;
   background:linear-gradient(90deg,#1e73ff 0%,#65adff 62%,#b7dcff 100%);
-  box-shadow:0 0 14px rgba(43,127,255,.34);
+  box-shadow:0 0 14px rgba(43,127,255,.30);
   opacity:.9;
   will-change:transform;
 }
 
-/* Signature glass-vane hero */
+/* Homepage hero */
 .hero{
-  min-height:84vh;
+  min-height:82vh;
   text-align:left;
   overflow:visible;
 }
@@ -310,9 +311,9 @@ html{
   width:100%;
   max-width:none;
   display:grid;
-  grid-template-columns:minmax(0,1.03fr) minmax(360px,.77fr);
+  grid-template-columns:minmax(0,1.08fr) minmax(300px,.72fr);
   align-items:center;
-  gap:clamp(34px,5vw,78px);
+  gap:clamp(30px,5vw,76px);
 }
 
 .hero-copy{
@@ -329,42 +330,83 @@ html{
   justify-content:flex-start;
 }
 
-.hero-vane-wrap{
-  position:relative;
-  z-index:1;
-  width:100%;
-  min-height:560px;
-  display:grid;
-  place-items:center;
+.hero-ribbon{
+  position:absolute;
+  z-index:0;
+  width:min(82vw,980px);
+  height:min(82vw,760px);
+  left:58%;
+  top:48%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 54% 48%,
+      rgba(255,255,255,.46) 0%,
+      rgba(158,208,250,.17) 38%,
+      rgba(92,166,232,.08) 56%,
+      transparent 72%);
+  filter:blur(34px);
   pointer-events:none;
 }
 
-.hero-vane-wrap::before{
-  content:"";
+/* Real transparent glass vane */
+.hero-vane-wrap{
+  position:relative;
+  width:100%;
+  min-height:520px;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+  z-index:1;
+}
+
+.glass-vane-glow{
   position:absolute;
-  width:88%;
-  height:78%;
+  width:82%;
+  aspect-ratio:1;
   border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,255,.60) 0%,rgba(115,183,244,.15) 50%,transparent 73%);
-  filter:blur(18px);
+  background:
+    radial-gradient(circle,
+      rgba(255,255,255,.52) 0%,
+      rgba(139,199,249,.18) 45%,
+      transparent 72%);
+  filter:blur(30px);
 }
 
 .hero-vane{
   position:relative;
+  z-index:1;
   display:block;
-  width:min(100%,510px);
-  max-height:610px;
-  object-fit:cover;
-  object-position:center;
+  width:min(100%,365px);
+  height:auto;
+  opacity:.68;
   filter:
-    drop-shadow(0 28px 48px rgba(53,112,166,.12))
-    saturate(.94)
-    contrast(.99);
-  -webkit-mask-image:radial-gradient(ellipse 77% 88% at 52% 48%,#000 61%,rgba(0,0,0,.92) 71%,transparent 100%);
-  mask-image:radial-gradient(ellipse 77% 88% at 52% 48%,#000 61%,rgba(0,0,0,.92) 71%,transparent 100%);
+    saturate(.88)
+    brightness(1.04)
+    drop-shadow(0 30px 58px rgba(52,123,187,.18));
+  animation:vaneFloat 9s ease-in-out infinite;
 }
 
-/* Quiet repeat of the glass vane in the footer */
+@keyframes vaneFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+}
+
+/* Remove the hard horizontal seam from the launch gradient. */
+.launch-card{
+  background:
+    radial-gradient(80% 76% at 50% 112%,
+      rgba(42,119,226,.24) 0%,
+      rgba(23,78,148,.13) 38%,
+      transparent 72%),
+    linear-gradient(180deg,#071426 0%,#08192f 100%);
+}
+
+.launch-card::before{
+  content:none;
+}
+
+/* Quiet brand echo in footer using the transparent PNG. */
 footer{
   position:relative;
   overflow:hidden;
@@ -375,21 +417,77 @@ footer::after{
   content:"";
   position:absolute;
   z-index:-1;
-  right:max(-72px,calc((100vw - 1180px)/2 - 110px));
-  bottom:-145px;
-  width:300px;
-  height:415px;
-  background:url("assets/glass-vane.webp") center/cover no-repeat;
-  opacity:.085;
-  filter:saturate(.72) contrast(.92);
-  -webkit-mask-image:radial-gradient(ellipse 72% 84% at 54% 46%,#000 42%,transparent 82%);
-  mask-image:radial-gradient(ellipse 72% 84% at 54% 46%,#000 42%,transparent 82%);
+  right:max(-68px,calc((100vw - 1180px)/2 - 95px));
+  bottom:-150px;
+  width:235px;
+  height:326px;
+  background:url("assets/glass-vane.png") center/contain no-repeat;
+  opacity:.045;
+  filter:saturate(.7);
   pointer-events:none;
 }
 
 .footer{
   position:relative;
   z-index:1;
+}
+
+/* Email-only Contact page */
+.contact-email-wrap{
+  width:min(880px,100%);
+  margin:0 auto;
+  padding:28px 0 96px;
+}
+
+.contact-email-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:28px;
+  padding:clamp(28px,5vw,52px);
+  border-radius:30px;
+  transition:
+    transform .25s ease,
+    background .25s ease,
+    box-shadow .25s ease;
+}
+
+.contact-email-card:hover{
+  transform:translateY(-3px);
+  background:linear-gradient(145deg,rgba(255,255,255,.60),rgba(255,255,255,.28));
+  box-shadow:
+    0 28px 76px rgba(43,91,131,.16),
+    inset 0 1px 0 rgba(255,255,255,.76);
+}
+
+.contact-email-card h2{
+  margin:0;
+  font-size:clamp(29px,4.3vw,48px);
+  line-height:1.05;
+  letter-spacing:-.045em;
+  overflow-wrap:anywhere;
+}
+
+.contact-email-card .kicker{
+  margin-bottom:12px;
+}
+
+.contact-email-arrow{
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:rgba(255,255,255,.32);
+  border:1px solid rgba(255,255,255,.48);
+  color:rgba(16,32,51,.62);
+  font-size:20px;
+  transition:transform .25s ease;
+}
+
+.contact-email-card:hover .contact-email-arrow{
+  transform:translate(2px,-2px);
 }
 
 @media(max-width:900px){
@@ -400,7 +498,7 @@ footer::after{
 
   .heroin{
     grid-template-columns:1fr;
-    gap:14px;
+    gap:8px;
   }
 
   .hero-copy{
@@ -417,108 +515,84 @@ footer::after{
   }
 
   .hero-vane-wrap{
-    min-height:420px;
+    min-height:390px;
     margin-top:8px;
   }
 
   .hero-vane{
-    width:min(78vw,430px);
-    max-height:470px;
+    width:min(72vw,285px);
+    opacity:.63;
   }
 }
 
 @media(max-width:700px){
   .hero{
-    padding-bottom:30px;
-  }
-
-  .heroin{
-    gap:4px;
+    padding-bottom:26px;
   }
 
   .hero-vane-wrap{
-    min-height:330px;
+    min-height:300px;
+    margin-top:0;
   }
 
   .hero-vane{
-    width:min(82vw,360px);
-    max-height:390px;
+    width:min(68vw,225px);
+    opacity:.58;
+  }
+
+  .contact-email-wrap{
+    padding:22px 0 66px;
+  }
+
+  .contact-email-card{
+    padding:26px 22px;
+    border-radius:24px;
+    gap:16px;
+  }
+
+  .contact-email-arrow{
+    width:42px;
+    height:42px;
   }
 
   footer::after{
-    width:220px;
-    height:305px;
-    right:-80px;
-    bottom:-125px;
-    opacity:.065;
+    width:180px;
+    height:250px;
+    right:-68px;
+    bottom:-112px;
+    opacity:.035;
   }
 }
 
-@media(max-width:430px){
+@media(max-width:390px){
   .hero-vane-wrap{
-    min-height:285px;
+    min-height:260px;
   }
 
   .hero-vane{
-    width:min(88vw,320px);
-    max-height:345px;
+    width:190px;
+  }
+
+  .contact-email-card{
+    align-items:flex-start;
+  }
+
+  .contact-email-arrow{
+    width:38px;
+    height:38px;
+    font-size:17px;
   }
 }
 
 @media(prefers-reduced-motion:reduce){
-  .scroll-progress{
+  .hero-vane{
+    animation:none;
+  }
+
+  .scroll-progress,
+  .contact-email-card,
+  .contact-email-arrow{
     transition:none;
   }
 }
 
-
-
-/* Glass weather vane */
-.hero-vane-wrap{
-  position:absolute;
-  right:6%;
-  top:50%;
-  transform:translateY(-50%);
-  width:min(34vw,420px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  pointer-events:none;
-}
-
-.hero-vane{
-  width:100%;
-  height:auto;
-  opacity:.45;
-  filter:drop-shadow(0 35px 70px rgba(80,150,220,.28));
-  animation:vaneFloat 9s ease-in-out infinite;
-}
-
-.hero-vane-wrap .glass-vane-glow{
-  position:absolute;
-  width:90%;
-  height:90%;
-  background:radial-gradient(circle,rgba(150,210,255,.45),transparent 70%);
-  filter:blur(45px);
-  z-index:-1;
-}
-
-@keyframes vaneFloat{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-12px)}
-}
-
-@media(max-width:900px){
-  .hero-vane-wrap{
-    position:relative;
-    right:auto;
-    top:auto;
-    transform:none;
-    width:240px;
-    margin:50px auto 0;
-  }
-
-  .hero-vane{
-    opacity:.38;
-  }
-}
