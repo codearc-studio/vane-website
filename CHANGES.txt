@@ -38,3 +38,17 @@ OG IMAGE
 - The current og.png is preserved visually.
 - It is already under 1 MB in this project, so the previous "image file is heavy" warning should be resolved.
 - "Image is missing conversion text" is a marketing recommendation from the inspector, not a broken meta tag.
+
+LATEST HERO INTEGRATION
+- Rebuilt the homepage hero as an atmospheric scene instead of placing the vane as a standalone image
+- Added the user's newly redone glass vane as assets/glass-vane-hero.jpg
+- Uses blend/masking so the white source background melts into the sky rather than showing as a rectangle
+- Added layered sky lighting and atmospheric haze
+- Added soft CSS clouds around the scene
+- Added subtle wind trails around the weather vane
+- Added a glass horizon/platform under the vane so it feels physically grounded
+- Added a faint reflection beneath the vane
+- Added a subtle floating animation with Reduce Motion support
+- Added a Scroll to explore cue on desktop
+- Styled the word "feels" with a restrained Vane-blue gradient
+- Preserved the rest of the homepage, Sense section, contact, privacy, terms, metadata, favicon, scrollbar, selection color, and progress bar

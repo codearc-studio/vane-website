@@ -63,24 +63,42 @@
 <main>
   <div class="shell">
 
-    <section class="hero">
-      <div class="hero-ribbon" aria-hidden="true"></div>
+    <section class="hero hero-scene">
+      <div class="hero-atmosphere" aria-hidden="true">
+        <span class="hero-sunwash"></span>
+        <span class="hero-cloud hero-cloud-a"></span>
+        <span class="hero-cloud hero-cloud-b"></span>
+        <span class="hero-cloud hero-cloud-c"></span>
+        <span class="wind-trail wind-trail-a"></span>
+        <span class="wind-trail wind-trail-b"></span>
+      </div>
+
       <div class="heroin reveal">
         <div class="hero-copy">
           <img src="assets/vane-logo.webp" class="hero-logo" alt="Vane">
           <div class="eyebrow">Coming soon to iPhone</div>
-          <h1>Weather, the way it feels to you.</h1>
+          <h1>Weather, the way it <span class="hero-feels">feels</span> to you.</h1>
           <p>We all experience weather differently. Vane learns how different conditions feel to you, then makes the forecast easier to understand without hiding the details.</p>
           <div class="actions">
             <a class="pill primary" href="#sense">Meet Sense</a>
             <a class="pill" href="#why">Why Vane</a>
           </div>
         </div>
-        <div class="hero-vane-wrap" aria-hidden="true">
-          <div class="glass-vane-glow"></div>
-          <img src="assets/glass-vane.png" class="hero-vane" alt="">
+
+        <div class="hero-vane-scene" aria-hidden="true">
+          <div class="vane-halo"></div>
+          <div class="vane-air-ring vane-air-ring-a"></div>
+          <div class="vane-air-ring vane-air-ring-b"></div>
+          <img src="assets/glass-vane-hero.jpg" class="hero-vane-new" alt="">
+          <div class="vane-platform"></div>
+          <img src="assets/glass-vane-hero.jpg" class="vane-reflection" alt="">
         </div>
       </div>
+
+      <a class="hero-scroll-cue" href="#why" aria-label="Scroll to explore">
+        <span></span>
+        <small>Scroll to explore</small>
+      </a>
     </section>
 
     <section id="why" class="reveal">
