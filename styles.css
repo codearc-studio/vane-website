@@ -459,3 +459,53 @@ footer::after{
   }
 }
 
+
+
+/* Final Vane polish */
+::selection {
+  background: rgba(43,127,255,.22);
+  color: #071426;
+}
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,.25); }
+::-webkit-scrollbar-thumb {
+  background: rgba(16,32,51,.28);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+.hero-vane-wrap {
+  position: relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.glass-vane-glow {
+  position:absolute;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(133,185,255,.35), transparent 70%);
+  filter: blur(30px);
+}
+
+.hero-vane-mark {
+  width:min(280px,40vw);
+  opacity:.88;
+  filter: drop-shadow(0 20px 40px rgba(43,127,255,.18));
+  position:relative;
+  z-index:1;
+}
+
+.email-only {
+  text-align:left;
+}
+
+@media(max-width:700px){
+  .hero-vane-mark {
+    width:180px;
+  }
+}
