@@ -1,0 +1,53 @@
+Vane full site package
+
+This package includes BOTH of the latest site updates.
+
+UPDATE 1 — Website polish
+Changed:
+- index.html
+- contact.html
+- privacy.html
+- terms.html
+- contact/index.html
+- privacy/index.html
+- terms/index.html
+- styles.css
+- site.js
+
+Added/updated:
+- favicon.ico
+- favicon.png
+- apple-touch-icon.png
+
+What changed:
+- Transparent Vane favicon added to every page
+- Apple touch icon added to every page
+- Custom Vane scrollbar
+- Vane-blue text selection highlight
+- Subtle mobile tap highlight
+- Thin scroll progress bar across the top
+- Contact page copy/content was not rewritten
+
+UPDATE 2 — Glass weather vane
+Changed:
+- index.html
+- styles.css
+
+Added:
+- assets/glass-vane.webp
+- assets/glass-vane.jpg
+
+What changed:
+- Glass weather vane added as the main homepage hero visual
+- A quiet, faded glass-vane treatment added to the footer
+- Responsive behavior added for desktop/tablet/mobile
+
+FULL SITE ASSETS INCLUDED
+- assets/vane-logo.png
+- assets/vane-logo.webp
+- og.png (the user's current 1200x630 OG image)
+- favicon.ico
+- favicon.png
+- apple-touch-icon.png
+
+Deploy the contents of the vane-website folder as your complete site.
