@@ -657,15 +657,15 @@ footer::after{
 }
 
 .hero-feels{
-  display:inline-block;
+  display:inline;
   font-style:italic;
   font-weight:650;
-  letter-spacing:-.052em;
-  color:transparent;
-  background:linear-gradient(112deg,#176ce9 0%,#438bf3 50%,#77b6fb 100%);
+  letter-spacing:-.05em;
+  background:linear-gradient(110deg,#1d73ee,#6da9ff);
   -webkit-background-clip:text;
   background-clip:text;
-  text-shadow:0 14px 34px rgba(30,111,229,.08);
+  color:transparent;
+  padding-right:.12em;
 }
 
 .hero.hero-scene p{
@@ -818,10 +818,6 @@ footer::after{
   animation:vaneFloatFinal 8s ease-in-out infinite;
 }
 
-@keyframes vaneFloatFinal{
-  0%,100%{transform:translateY(0) rotate(.08deg)}
-  50%{transform:translateY(-8px) rotate(-.25deg)}
-}
 
 .wind-swish{
   position:absolute;
@@ -854,23 +850,18 @@ footer::after{
 .vane-floor{
   position:absolute;
   z-index:2;
-  left:3%;
-  right:3%;
-  bottom:0;
-  height:29%;
+  bottom:40px;
+  width:90%;
+  height:120px;
   border-radius:50%;
   background:
-    radial-gradient(ellipse at center,
-      rgba(255,255,255,.82) 0%,
-      rgba(228,244,255,.56) 38%,
-      rgba(149,200,239,.14) 67%,
-      transparent 76%);
-  border-top:1px solid rgba(255,255,255,.78);
-  box-shadow:
-    inset 0 12px 42px rgba(255,255,255,.55),
-    0 -24px 56px rgba(255,255,255,.22);
-  transform:perspective(620px) rotateX(70deg) translateY(15%);
-  transform-origin:center bottom;
+    radial-gradient(
+      ellipse,
+      rgba(255,255,255,.95),
+      rgba(220,240,255,.45) 45%,
+      transparent 75%
+    );
+  filter:blur(8px);
 }
 
 .vane-reflection{
@@ -884,54 +875,6 @@ footer::after{
   filter:blur(4px) saturate(.65);
   -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.60),transparent 54%);
   mask-image:linear-gradient(to bottom,rgba(0,0,0,.60),transparent 54%);
-}
-
-.hero-scroll-cue{
-  position:absolute;
-  z-index:6;
-  left:50%;
-  bottom:22px;
-  transform:translateX(-50%);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:6px;
-  color:rgba(22,74,124,.38);
-  text-transform:uppercase;
-  letter-spacing:.14em;
-}
-
-.scroll-mouse{
-  width:20px;
-  height:31px;
-  border:1px solid rgba(28,87,143,.25);
-  border-radius:999px;
-  background:rgba(255,255,255,.20);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  position:relative;
-}
-
-.scroll-mouse i{
-  position:absolute;
-  left:50%;
-  top:6px;
-  width:3px;
-  height:6px;
-  border-radius:999px;
-  background:rgba(30,101,166,.44);
-  transform:translateX(-50%);
-  animation:scrollDot 1.9s ease-in-out infinite;
-}
-
-.hero-scroll-cue small{
-  font-size:9px;
-  font-weight:720;
-}
-
-@keyframes scrollDot{
-  0%,100%{transform:translate(-50%,0);opacity:.45}
-  50%{transform:translate(-50%,6px);opacity:.9}
 }
 
 @media(max-width:900px){
@@ -978,29 +921,22 @@ footer::after{
   }
 
   .hero-vane-new{
-    width:min(72vw,360px);
-    opacity:.76;
-  }
-
-  .vane-floor{
-    left:15%;
-    right:15%;
-    height:25%;
-  }
-
-  .vane-reflection{
-    width:min(46vw,300px);
-    bottom:-12%;
-  }
-
-  .hero-scroll-cue{
-    display:none;
-  }
+  position:relative;
+  z-index:5;
+  width:min(42vw,520px);
+  max-height:650px;
+  object-fit:contain;
+  opacity:.82;
+  filter:
+    saturate(.85)
+    brightness(1.06)
+    drop-shadow(0 35px 60px rgba(45,110,170,.22));
+  transform:translateY(-35px);
 }
 
 @media(max-width:700px){
   .hero.hero-scene{
-    border-radius:30px;
+    border-radius:0;
     padding:68px 18px 48px;
   }
 
@@ -1015,46 +951,33 @@ footer::after{
   }
 
   .hero-vane-scene{
-    min-height:350px;
-    margin-top:-8px;
-  }
-
-  .hero-vane-new{
-    width:min(74vw,285px);
-    opacity:.73;
-  }
-
-  .wind-swish-one{
-    width:210px;
-  }
-
-  .wind-swish-two{
-    width:160px;
-  }
+  position:relative;
+  min-height:620px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  padding-bottom:70px;
+  align-self:stretch;
+  z-index:3;
 }
 
 @media(max-width:430px){
   .hero.hero-scene{
-    padding-left:14px;
-    padding-right:14px;
-  }
-
-  .hero.hero-scene h1{
-    font-size:43px;
-  }
-
-  .hero-vane-scene{
-    min-height:315px;
-  }
-
-  .hero-vane-new{
-    width:250px;
-  }
+  position:relative;
+  min-height:100svh;
+  padding:110px 34px 80px;
+  overflow:hidden;
+  isolation:isolate;
+  text-align:left;
+  border-radius:0;
+  background:
+    radial-gradient(90% 80% at 90% 10%,rgba(255,255,255,.95),transparent 55%),
+    linear-gradient(145deg,#eef8ff 0%,#cceaff 45%,#9ed0f4 100%);
+  box-shadow:none;
 }
 
 @media(prefers-reduced-motion:reduce){
-  .hero-vane-new,
-  .scroll-mouse i{
+  .hero-vane-new{
     animation:none;
   }
 }
