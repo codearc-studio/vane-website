@@ -600,21 +600,21 @@ footer::after{
    Vane atmospheric hero — final
    ======================================================= */
 
+/*
+   The hero intentionally has no card/background of its own.
+   Its atmosphere spills softly into the page so it feels like
+   one continuous canvas instead of a rounded panel.
+*/
 .hero.hero-scene{
   position:relative;
-  min-height:clamp(720px,86vh,900px);
-  padding:clamp(78px,9vh,112px) clamp(34px,4vw,58px) clamp(92px,10vh,122px);
-  overflow:hidden;
+  min-height:clamp(720px,84vh,880px);
+  padding:clamp(72px,8vh,102px) clamp(34px,4vw,58px) clamp(72px,8vh,96px);
+  overflow:visible;
   isolation:isolate;
   text-align:left;
-  border-radius:42px;
-  background:
-    radial-gradient(92% 88% at 92% 9%,rgba(255,255,255,.92) 0%,rgba(255,255,255,.44) 29%,transparent 57%),
-    radial-gradient(74% 70% at 9% 7%,rgba(255,255,255,.88) 0%,rgba(255,255,255,.44) 28%,transparent 57%),
-    linear-gradient(145deg,#e9f6ff 0%,#cce9fb 35%,#a9d4f5 69%,#dcefff 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.76),
-    0 28px 80px rgba(56,111,160,.14);
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
 }
 
 .hero.hero-scene .heroin{
@@ -622,7 +622,7 @@ footer::after{
   z-index:4;
   width:100%;
   max-width:none;
-  min-height:clamp(540px,66vh,670px);
+  min-height:clamp(540px,64vh,650px);
   display:grid;
   grid-template-columns:minmax(0,1.02fr) minmax(380px,.98fr);
   align-items:center;
@@ -696,7 +696,7 @@ footer::after{
     0 14px 34px rgba(22,67,116,.18);
 }
 
-/* Atmospheric background */
+/* Atmospheric light without a visible container edge. */
 .hero-atmosphere,
 .hero-atmosphere span{
   position:absolute;
@@ -704,69 +704,69 @@ footer::after{
 }
 
 .hero-atmosphere{
-  inset:0;
+  inset:-80px -14vw -70px;
   z-index:0;
   overflow:hidden;
 }
 
 .hero-sunwash{
-  width:68%;
+  width:62%;
   height:72%;
-  right:-12%;
-  top:-18%;
+  right:-5%;
+  top:-16%;
   border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,255,.96),rgba(255,255,255,.46) 36%,transparent 72%);
-  filter:blur(26px);
+  background:radial-gradient(circle,rgba(255,255,255,.74),rgba(255,255,255,.28) 38%,transparent 72%);
+  filter:blur(34px);
 }
 
 .hero-horizon-glow{
-  left:-8%;
-  right:-8%;
-  bottom:-12%;
+  left:3%;
+  right:-4%;
+  bottom:-4%;
   height:43%;
   background:
     radial-gradient(ellipse at center,
-      rgba(255,255,255,.86) 0%,
-      rgba(235,247,255,.64) 36%,
-      rgba(166,211,244,.24) 64%,
+      rgba(255,255,255,.56) 0%,
+      rgba(235,247,255,.36) 36%,
+      rgba(166,211,244,.14) 64%,
       transparent 78%);
-  filter:blur(8px);
+  filter:blur(16px);
 }
 
 .hero-cloud{
   border-radius:999px;
-  background:rgba(255,255,255,.62);
-  filter:blur(18px);
+  background:rgba(255,255,255,.38);
+  filter:blur(23px);
   box-shadow:
-    58px 7px 0 10px rgba(255,255,255,.54),
-    112px 16px 0 1px rgba(255,255,255,.46),
-    165px 4px 0 -14px rgba(255,255,255,.38);
+    58px 7px 0 10px rgba(255,255,255,.34),
+    112px 16px 0 1px rgba(255,255,255,.27),
+    165px 4px 0 -14px rgba(255,255,255,.22);
 }
 
 .hero-cloud-left{
   width:195px;
   height:68px;
-  left:-78px;
-  top:37%;
-  opacity:.48;
+  left:-22px;
+  top:38%;
+  opacity:.38;
   transform:scale(1.12);
 }
 
 .hero-cloud-mid{
   width:185px;
   height:62px;
-  left:25%;
-  bottom:9%;
-  opacity:.27;
+  left:27%;
+  bottom:8%;
+  opacity:.19;
   transform:scale(.92);
 }
 
 .hero-cloud-right{
   width:210px;
   height:70px;
-  right:-80px;
-  top:29%;
-  opacity:.60;
+  right:-18px;
+  top:31%;
+  opacity:.42;
   transform:scale(1.15);
 }
 
@@ -775,119 +775,85 @@ footer::after{
   height:72px;
   right:17%;
   bottom:4%;
-  opacity:.24;
+  opacity:.17;
   transform:scale(1.1);
 }
 
-/* Glass vane scene */
+/* Grounded glass vane scene. */
 .hero-vane-scene{
   position:relative;
   min-height:590px;
-  display:grid;
-  place-items:center;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
   align-self:stretch;
+  padding-bottom:58px;
   z-index:3;
 }
 
 .vane-halo{
   position:absolute;
-  width:min(39vw,490px);
+  width:min(38vw,470px);
   aspect-ratio:1;
+  left:50%;
+  top:48%;
   border-radius:50%;
   background:
     radial-gradient(circle,
-      rgba(255,255,255,.76) 0%,
-      rgba(255,255,255,.38) 33%,
-      rgba(117,190,247,.16) 56%,
+      rgba(255,255,255,.56) 0%,
+      rgba(255,255,255,.25) 34%,
+      rgba(117,190,247,.10) 57%,
       transparent 74%);
-  filter:blur(28px);
-  transform:translateY(-5%);
+  filter:blur(32px);
+  transform:translate(-50%,-50%);
 }
 
 .hero-vane-new{
   position:relative;
   z-index:5;
+  display:block;
   width:min(42vw,500px);
   max-height:640px;
   object-fit:contain;
-  opacity:.80;
+  opacity:.84;
   filter:
     saturate(.88)
     brightness(1.04)
-    drop-shadow(0 34px 58px rgba(52,112,171,.17));
-  animation:vaneFloatFinal 8s ease-in-out infinite;
+    drop-shadow(0 18px 32px rgba(52,112,171,.12));
+  transform:none;
+  animation:none;
 }
 
-
-.wind-swish{
-  position:absolute;
-  z-index:4;
-  border:1.5px solid rgba(255,255,255,.55);
-  border-left-color:transparent;
-  border-bottom-color:transparent;
-  border-radius:50%;
-  filter:blur(.2px);
-  opacity:.56;
-}
-
-.wind-swish-one{
-  width:330px;
-  height:118px;
-  right:-1%;
-  top:33%;
-  transform:rotate(-8deg);
-}
-
-.wind-swish-two{
-  width:240px;
-  height:86px;
-  right:13%;
-  top:43%;
-  transform:rotate(10deg);
-  opacity:.31;
-}
-
+/* A compact contact shadow directly under the glass base. */
 .vane-floor{
   position:absolute;
   z-index:2;
-  bottom:40px;
-  width:90%;
-  height:120px;
+  left:50%;
+  bottom:42px;
+  width:min(68%,390px);
+  height:46px;
+  transform:translateX(-50%);
   border-radius:50%;
   background:
-    radial-gradient(
-      ellipse,
-      rgba(255,255,255,.95),
-      rgba(220,240,255,.45) 45%,
-      transparent 75%
-    );
-  filter:blur(8px);
-}
-
-.vane-reflection{
-  position:absolute;
-  z-index:1;
-  width:min(37vw,430px);
-  bottom:-17%;
-  opacity:.055;
-  transform:scaleY(-.40);
-  transform-origin:center bottom;
-  filter:blur(4px) saturate(.65);
-  -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.60),transparent 54%);
-  mask-image:linear-gradient(to bottom,rgba(0,0,0,.60),transparent 54%);
+    radial-gradient(ellipse at center,
+      rgba(70,126,179,.16) 0%,
+      rgba(255,255,255,.48) 34%,
+      rgba(226,243,255,.18) 56%,
+      transparent 74%);
+  filter:blur(7px);
 }
 
 @media(max-width:900px){
   .hero.hero-scene{
     min-height:auto;
-    padding:78px 24px 68px;
+    padding:72px 24px 54px;
     text-align:center;
   }
 
   .hero.hero-scene .heroin{
     min-height:auto;
     grid-template-columns:1fr;
-    gap:6px;
+    gap:10px;
   }
 
   .hero.hero-scene .hero-copy{
@@ -915,29 +881,31 @@ footer::after{
     justify-content:center;
   }
 
+  .hero-atmosphere{
+    inset:-40px -12vw -30px;
+  }
+
   .hero-vane-scene{
-    min-height:450px;
-    margin-top:-4px;
+    min-height:430px;
+    margin-top:0;
+    padding-bottom:48px;
   }
 
   .hero-vane-new{
-  position:relative;
-  z-index:5;
-  width:min(42vw,520px);
-  max-height:650px;
-  object-fit:contain;
-  opacity:.82;
-  filter:
-    saturate(.85)
-    brightness(1.06)
-    drop-shadow(0 35px 60px rgba(45,110,170,.22));
-  transform:translateY(-35px);
+    width:min(72vw,330px);
+    max-height:none;
+  }
+
+  .vane-floor{
+    bottom:34px;
+    width:min(58vw,270px);
+    height:38px;
+  }
 }
 
 @media(max-width:700px){
   .hero.hero-scene{
-    border-radius:0;
-    padding:68px 18px 48px;
+    padding:64px 18px 36px;
   }
 
   .hero.hero-scene h1{
@@ -951,29 +919,41 @@ footer::after{
   }
 
   .hero-vane-scene{
-  position:relative;
-  min-height:620px;
-  display:flex;
-  justify-content:center;
-  align-items:flex-end;
-  padding-bottom:70px;
-  align-self:stretch;
-  z-index:3;
+    min-height:330px;
+    padding-bottom:38px;
+  }
+
+  .hero-vane-new{
+    width:min(68vw,255px);
+  }
+
+  .vane-floor{
+    bottom:26px;
+    width:min(54vw,210px);
+    height:32px;
+  }
 }
 
 @media(max-width:430px){
   .hero.hero-scene{
-  position:relative;
-  min-height:100svh;
-  padding:110px 34px 80px;
-  overflow:hidden;
-  isolation:isolate;
-  text-align:left;
-  border-radius:0;
-  background:
-    radial-gradient(90% 80% at 90% 10%,rgba(255,255,255,.95),transparent 55%),
-    linear-gradient(145deg,#eef8ff 0%,#cceaff 45%,#9ed0f4 100%);
-  box-shadow:none;
+    min-height:auto;
+    padding:62px 14px 28px;
+    text-align:center;
+  }
+
+  .hero-vane-scene{
+    min-height:290px;
+    padding-bottom:34px;
+  }
+
+  .hero-vane-new{
+    width:min(74vw,235px);
+  }
+
+  .vane-floor{
+    bottom:23px;
+    width:190px;
+  }
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -981,4 +961,3 @@ footer::after{
     animation:none;
   }
 }
-
