@@ -17,13 +17,13 @@
 <link rel="stylesheet" href="styles.css">
 
 <title>Vane Weather | Weather, the way it feels to you.</title>
-<meta name="description" content="Vane is a personal weather app that learns how different conditions feel to you, then turns everyday forecasts into clearer, more useful guidance.">
+<meta name="description" content="Vane is a personal weather app that learns how different conditions feel to you. The public iPhone beta is now available through TestFlight.">
 <meta name="robots" content="index,follow,max-image-preview:large">
 
 <meta property="og:site_name" content="Vane">
 <meta property="og:locale" content="en_US">
 <meta property="og:title" content="Vane Weather | Weather, the way it feels to you.">
-<meta property="og:description" content="Vane learns how weather feels to you, then makes forecasts more personal while keeping the weather details you expect.">
+<meta property="og:description" content="Vane learns how weather feels to you while keeping the forecast details you expect. The public iPhone beta is now open on TestFlight.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://vane.codearc.studio/">
 <meta property="og:image" content="https://vane.codearc.studio/og.png">
@@ -36,7 +36,7 @@
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Vane Weather | Weather, the way it feels to you.">
-<meta name="twitter:description" content="Vane learns how weather feels to you, then makes forecasts more personal while keeping the weather details you expect.">
+<meta name="twitter:description" content="Vane learns how weather feels to you while keeping the forecast details you expect. The public iPhone beta is now open on TestFlight.">
 <meta name="twitter:image" content="https://vane.codearc.studio/og.png">
 <meta name="twitter:image:alt" content="Vane Weather logo and glass weather vane against a soft blue sky, with the tagline Weather, the way it feels to you.">
 </head>
@@ -54,7 +54,7 @@
         <a class="navlink" href="#sense">Sense</a>
         <a class="navlink" href="#privacy">Privacy</a>
         <a class="navlink" href="contact/">Contact</a>
-        <a class="pill primary nav-cta" href="#coming-soon">Coming soon</a>
+        <a class="pill primary nav-cta" href="https://testflight.apple.com/join/GHEW2GvN" target="_blank" rel="noopener noreferrer">Join beta</a>
       </div>
     </div>
   </div>
@@ -76,13 +76,14 @@
       <div class="heroin reveal">
         <div class="hero-copy">
           <img src="assets/vane-logo.webp" class="hero-logo" alt="Vane">
-          <div class="eyebrow">Coming soon to iPhone</div>
+          <div class="eyebrow beta-eyebrow"><span class="beta-live-dot" aria-hidden="true"></span>Public beta now open</div>
           <h1>Weather,<br>the way it<br><span class="hero-feels">feels</span> to you.</h1>
           <p>We all experience weather differently. Vane learns how different conditions feel to you, then makes the forecast easier to understand without hiding the details.</p>
-          <div class="actions">
-            <a class="pill primary" href="#sense">Meet Sense</a>
-            <a class="pill" href="#why">Why Vane</a>
+          <div class="actions beta-actions">
+            <a class="pill primary beta-primary" href="https://testflight.apple.com/join/GHEW2GvN" target="_blank" rel="noopener noreferrer">Join the beta</a>
+            <a class="pill" href="#sense">Meet Sense</a>
           </div>
+          <div class="beta-meta">Free to test on iPhone with TestFlight</div>
         </div>
 
         <div class="hero-vane-scene" aria-hidden="true">
@@ -251,13 +252,23 @@
       </div>
     </section>
 
-    <section id="coming-soon" class="launch reveal">
-      <div class="launch-card">
+    <span id="coming-soon" class="anchor-alias" aria-hidden="true"></span>
+    <section id="beta" class="launch reveal">
+      <div class="launch-card beta-launch-card">
         <img src="assets/vane-logo.webp" alt="" class="launch-mark">
-        <div class="kicker light">Vane Weather</div>
-        <h2>A forecast that feels more like yours.</h2>
-        <p>Coming soon to iPhone.</p>
-        <span class="pill launch-pill">Coming soon</span>
+        <div class="kicker light">Public Beta</div>
+        <h2>Try Vane before it launches.</h2>
+        <p>Join the public iPhone beta on TestFlight and help shape Vane with real-world feedback.</p>
+        <a class="testflight-cta" href="https://testflight.apple.com/join/GHEW2GvN" target="_blank" rel="noopener noreferrer" aria-label="Join the Vane public beta on TestFlight">
+          <span class="testflight-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false">
+              <path d="M20.6 3.4 9.4 14.6m11.2-11.2-7.1 17.2-4.1-6-6-4.1 17.2-7.1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="testflight-copy"><small>Join Vane on</small><strong>TestFlight</strong></span>
+          <span class="testflight-arrow" aria-hidden="true">↗</span>
+        </a>
+        <div class="beta-fineprint">Free public beta · iPhone</div>
       </div>
     </section>
   </div>
@@ -267,6 +278,7 @@
   <div class="shell footer">
     <a class="footer-brand" href="./"><img src="assets/vane-logo.webp" alt=""><span>Vane</span></a>
     <div class="footerlinks">
+      <a href="https://testflight.apple.com/join/GHEW2GvN" target="_blank" rel="noopener noreferrer">Beta</a>
       <a href="contact/">Contact</a>
       <a href="privacy/">Privacy</a>
       <a href="terms/">Terms</a>

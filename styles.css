@@ -961,3 +961,146 @@ footer::after{
     animation:none;
   }
 }
+
+
+/* =======================================================
+   Public beta / TestFlight
+   ======================================================= */
+.anchor-alias{
+  display:block;
+  position:relative;
+  top:-96px;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.beta-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+}
+
+.beta-live-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#2b7fff;
+  box-shadow:0 0 0 5px rgba(43,127,255,.10),0 0 18px rgba(43,127,255,.28);
+}
+
+.beta-actions{
+  align-items:center;
+}
+
+.beta-primary{
+  box-shadow:0 12px 32px rgba(7,20,38,.16),0 0 0 1px rgba(255,255,255,.12) inset;
+}
+
+.beta-meta{
+  margin-top:14px;
+  color:rgba(54,85,119,.72);
+  font-size:12.5px;
+  font-weight:650;
+  letter-spacing:.01em;
+}
+
+.beta-launch-card{
+  padding-top:clamp(54px,8vw,86px);
+  padding-bottom:clamp(54px,8vw,86px);
+}
+
+.beta-launch-card p{
+  max-width:620px;
+  margin:18px auto 0;
+  line-height:1.55;
+}
+
+.testflight-cta{
+  position:relative;
+  z-index:1;
+  display:inline-grid;
+  grid-template-columns:46px auto 28px;
+  align-items:center;
+  gap:13px;
+  min-width:270px;
+  margin-top:28px;
+  padding:11px 14px 11px 12px;
+  border-radius:19px;
+  color:#071426;
+  background:linear-gradient(180deg,rgba(255,255,255,.99),rgba(236,245,255,.96));
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:0 18px 46px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.92);
+  text-align:left;
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+
+.testflight-cta:hover{
+  transform:translateY(-2px);
+  box-shadow:0 22px 52px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.96);
+}
+
+.testflight-cta:active{
+  transform:translateY(0) scale(.99);
+}
+
+.testflight-mark{
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  background:linear-gradient(145deg,#6ec8ff 0%,#2d8cff 52%,#1763e3 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 8px 18px rgba(29,112,232,.24);
+}
+
+.testflight-mark svg{
+  width:25px;
+  height:25px;
+}
+
+.testflight-copy{
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+  line-height:1.02;
+}
+
+.testflight-copy small{
+  color:rgba(7,20,38,.54);
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.04em;
+}
+
+.testflight-copy strong{
+  font-size:20px;
+  letter-spacing:-.025em;
+}
+
+.testflight-arrow{
+  justify-self:end;
+  color:rgba(7,20,38,.48);
+  font-size:18px;
+  font-weight:700;
+}
+
+.beta-fineprint{
+  position:relative;
+  z-index:1;
+  margin-top:13px;
+  color:rgba(255,255,255,.46);
+  font-size:11.5px;
+  font-weight:650;
+  letter-spacing:.025em;
+}
+
+@media(max-width:700px){
+  .beta-meta{
+    text-align:center;
+  }
+  .testflight-cta{
+    width:min(100%,330px);
+    min-width:0;
+  }
+}
