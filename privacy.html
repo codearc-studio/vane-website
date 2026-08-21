@@ -60,7 +60,7 @@
     <div class="kicker">Legal</div>
     <h1>Privacy Policy</h1>
     <p>Vane is built around personal weather, so privacy matters. This policy explains what information Vane may use, why it is used, and the choices you have.</p>
-    <span class="updated">Last updated August 12, 2026</span>
+    <span class="updated">Last updated August 20, 2026</span>
   </header>
 
   <div class="legalwrap">
@@ -69,7 +69,8 @@
       <a href="#information">Information</a>
       <a href="#use">How it is used</a>
       <a href="#location">Location</a>
-      <a href="#icloud">Apple services</a>
+      <a href="#icloud">iCloud sync</a>
+      <a href="#services">Apple services</a>
       <a href="#sharing">Sharing</a>
       <a href="#retention">Retention</a>
       <a href="#choices">Your choices</a>
@@ -80,38 +81,46 @@
 
     <article class="legal glass">
       <h2 id="overview">Overview</h2>
-      <p>Vane is developed and operated by CodeArc.studio. Vane is designed to provide weather information and personalize how weather conditions are described based on your check-ins and preferences.</p>
-      <p>Vane is designed to collect only the information needed to provide and improve the experience. Vane does not sell personal information and is not designed around advertising or cross-app tracking.</p>
+      <p>Vane is developed and operated by CodeArc.studio. Vane provides weather information and personalizes how conditions are described using optional check-ins and preferences.</p>
+      <p>Vane does not use advertising or cross-app tracking, does not sell personal information, and does not require a separate Vane account. Certain Vane data can sync through Apple CloudKit using the private iCloud database associated with your Apple Account.</p>
 
       <h2 id="information">Information Vane may use</h2>
       <p>Depending on the features you use, Vane may process the following types of information:</p>
       <ul>
-        <li>Weather check-ins, such as whether conditions feel chilly, comfortable, warm, or hot to you.</li>
-        <li>Weather conditions associated with a check-in, such as temperature, humidity, wind, precipitation, sun, and related forecast information.</li>
-        <li>Locations you choose to view or save for weather forecasts.</li>
-        <li>App settings and personalization preferences.</li>
-        <li>Information you choose to send when you contact support.</li>
+        <li><strong>Sense profile information</strong>, including your temperature preference, wind and humidity sensitivity, feels-like preference, and check-in frequency.</li>
+        <li><strong>Weather check-ins</strong>, including how conditions felt to you and the weather conditions associated with that moment, such as temperature, apparent temperature, humidity, wind, precipitation, UV, cloud cover, pressure, visibility, daylight status, time zone, and a location name when available.</li>
+        <li><strong>Saved places</strong>, including the place name, region, coordinates, time zone, ordering, and whether you mark a place as home.</li>
+        <li><strong>Current location</strong>, when you allow location access, so Vane can request weather for where you are and determine whether a check-in matches the place whose forecast you are viewing.</li>
+        <li><strong>App preferences stored on your device</strong>, such as appearance, units, selected weather location, notification preferences, and similar settings.</li>
+        <li><strong>Support information</strong> you choose to send when you contact CodeArc.studio.</li>
       </ul>
 
       <h2 id="use">How information is used</h2>
-      <p>Information is used to provide forecasts, personalize how weather is described, improve calibration over time, remember your preferences, support app features, and respond to support requests.</p>
+      <p>Vane uses this information to provide forecasts and alerts, personalize weather descriptions through Sense, improve calibration from your check-ins, remember saved places and preferences, sync supported Vane data between your devices, power widgets and Live Activities, and respond to support requests.</p>
 
       <h2 id="location">Location</h2>
-      <p>Vane may request access to your location so it can show weather for where you are. Vane is designed so that check-ins can learn from the weather conditions around you without turning your check-in history into a precise location history.</p>
-      <p>You can control location access through your device settings. Some Vane features may be limited if location access is disabled.</p>
+      <p>If you grant location permission, Vane uses your device location to load weather for your current area. Coordinates are provided to Apple services as needed to request weather and location information.</p>
+      <p>Saved places include coordinates because Vane needs them to request the correct forecast and those saved-place coordinates can sync through your private iCloud database. Check-ins store the weather conditions, time zone, and a location name when available, but Vane does not store the precise latitude and longitude of each check-in as part of the check-in record.</p>
+      <p>You can control Vane's location access in your device settings. You can also use saved places when current-location access is unavailable, although some features may be limited.</p>
 
-      <h2 id="icloud">Apple and third-party services</h2>
-      <p>Vane uses Apple services such as WeatherKit and location services to provide weather and related functionality. Those services are subject to Apple's own privacy practices and terms.</p>
-      <p>For air-quality information, Vane sends the active location's latitude and longitude to Open-Meteo, which returns modeled data from the Copernicus Atmosphere Monitoring Service (CAMS). Vane does not include your check-in response or profile in that request. Weather and air-quality information can vary by source, location, model, and update time.</p>
+      <h2 id="icloud">iCloud and CloudKit sync</h2>
+      <p>Vane uses Apple's CloudKit to sync your Sense profile, weather check-ins, and saved places through the private iCloud database associated with your Apple Account. This lets supported Vane apps use the same personal weather data across your signed-in Apple devices without creating a separate Vane account.</p>
+      <p>Apple describes the CloudKit private database as belonging to the iCloud user and being accessible only to that user by default. Its contents are not visible to CodeArc.studio through the CloudKit developer portal. Vane does not copy this synced data to a separate CodeArc-operated account server.</p>
+      <p>If iCloud is unavailable, restricted, or you are not signed in, Vane can keep changes locally on the device and resume syncing when iCloud becomes available.</p>
+
+      <h2 id="services">Apple and third-party services</h2>
+      <p>Vane relies on Apple services including WeatherKit / Apple Weather, Core Location, MapKit, CloudKit, notifications, widgets, and related platform features. Information processed by Apple through those services is subject to Apple's privacy practices and terms.</p>
+      <p>Vane currently uses Apple Weather for its forecast data and does not request a separate third-party air-quality model.</p>
 
       <h2 id="sharing">Sharing and disclosure</h2>
-      <p>Vane does not sell your personal information. Information may be disclosed when necessary to operate the app through service providers or platform services, comply with law, protect users or the service, or complete a business transfer such as a merger or acquisition. Any service provider used by Vane should only receive information needed for the service it performs.</p>
+      <p>Vane does not sell your personal information and is not designed for advertising or cross-app tracking. Data may be processed by Apple when required to provide Apple platform services such as weather, maps, location, notifications, and iCloud sync. Information may also be disclosed when required by law, needed to protect users or the service, or as part of a business transfer such as a merger or acquisition.</p>
 
-      <h2 id="retention">Data retention</h2>
-      <p>Vane aims to keep personal information only for as long as it is useful for the features you choose to use, required for legal or security purposes, or needed to maintain your preferences and history. Where available, Vane may provide controls to reset personalization, remove check-in history, or delete app data.</p>
+      <h2 id="retention">Data retention and deletion</h2>
+      <p>Your Sense profile, check-ins, and saved places remain available to Vane so those features can work and, when iCloud is available, can remain synchronized across your devices. Vane does not maintain a separate CodeArc server-side copy of that private CloudKit data.</p>
+      <p>In Vane Settings, you can delete your check-in history, reset what Sense has learned, or delete all Vane data. Deletions to synced profile, check-in, and saved-place data are made through the same iCloud-backed store and are intended to propagate to your Vane apps using that private database. Device permissions can be changed separately in system Settings.</p>
 
       <h2 id="choices">Your choices</h2>
-      <p>You can choose whether to provide optional check-ins, change app permissions through your device, manage Vane settings, and contact us about privacy questions or requests. Ignoring or skipping a check-in does not prevent you from using the basic weather experience.</p>
+      <p>Check-ins are optional. You can skip them and continue using the basic weather experience. You can manage location and notification permissions through system Settings, manage Vane preferences in the app, remove saved places, delete individual check-ins, use the privacy reset controls in Vane Settings, and contact us with privacy questions or requests.</p>
 
       <h2 id="children">Children's privacy</h2>
       <p>Vane is not intended to knowingly collect personal information from children in a way that requires parental consent under applicable law. If you believe a child has provided personal information improperly, contact us so we can review the request.</p>
