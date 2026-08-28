@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/a/:id",
+      "destination": "/alert/index.html?id=:id"
+    },
+    {
       "source": "/alert/:id",
       "destination": "/alert/index.html?id=:id"
     }

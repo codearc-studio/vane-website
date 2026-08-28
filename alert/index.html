@@ -168,7 +168,7 @@
     <section class="card invalid" id="invalidCard">
       <div class="eyebrow"><span class="dot"></span> Vane</div>
       <h1>This alert link isn’t valid.</h1>
-      <p>The shared alert code may be incomplete or no longer usable.</p>
+      <p>The shared alert code may be incorrect, expired, or no longer available.</p>
       <div class="actions">
         <a class="button secondary" href="https://vane.codearc.studio/">Go to Vane</a>
       </div>
@@ -179,10 +179,15 @@
     (() => {
       const params = new URLSearchParams(window.location.search);
       const pathParts = window.location.pathname.split('/').filter(Boolean);
-      const token = params.get('id') || (pathParts[0] === 'alert' ? pathParts[1] : null);
+      const token = params.get('id') || ((pathParts[0] === 'a' || pathParts[0] === 'alert') ? pathParts[1] : null);
       const validCard = document.getElementById('validCard');
       const invalidCard = document.getElementById('invalidCard');
       const officialLink = document.getElementById('officialLink');
+
+      function showInvalid() {
+        validCard.classList.add('hidden');
+        invalidCard.classList.add('visible');
+      }
 
       function decodeUUID(compact) {
         if (!compact || !/^[A-Za-z0-9_-]{22}$/.test(compact)) return null;
@@ -197,27 +202,60 @@
         }
       }
 
-      const alertID = decodeUUID(token);
-      if (!alertID) {
-        validCard.classList.add('hidden');
-        invalidCard.classList.add('visible');
-        return;
+      function setOfficialAlert(alertID) {
+        if (!/^[0-9a-f-]{36}$/i.test(alertID || '')) {
+          showInvalid();
+          return;
+        }
+
+        const language = navigator.language || 'en-US';
+        let timezone = 'UTC';
+        try { timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch (_) {}
+
+        const official = new URL('https://weatherkit.apple.com/alertDetails/index.html');
+        official.searchParams.set('ids', alertID);
+        official.searchParams.set('lang', language);
+        official.searchParams.set('timezone', timezone);
+        officialLink.href = official.toString();
+
+        const canonical = document.createElement('link');
+        canonical.rel = 'canonical';
+        canonical.href = /^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{5,7}$/i.test(token || '')
+          ? `https://vane.codearc.studio/a/${token.toUpperCase()}`
+          : `https://vane.codearc.studio/alert/${token}`;
+        document.head.appendChild(canonical);
       }
 
-      const language = navigator.language || 'en-US';
-      let timezone = 'UTC';
-      try { timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch (_) {}
+      async function resolve() {
+        if (!token) {
+          showInvalid();
+          return;
+        }
 
-      const official = new URL('https://weatherkit.apple.com/alertDetails/index.html');
-      official.searchParams.set('ids', alertID);
-      official.searchParams.set('lang', language);
-      official.searchParams.set('timezone', timezone);
-      officialLink.href = official.toString();
+        if (/^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{5,7}$/i.test(token)) {
+          try {
+            const response = await fetch(`/api/alert?id=${encodeURIComponent(token.toUpperCase())}`, {
+              headers: { Accept: 'application/json' },
+              cache: 'no-store',
+            });
+            if (!response.ok) throw new Error(`Lookup failed with ${response.status}`);
+            const payload = await response.json();
+            setOfficialAlert(payload.alertID);
+          } catch (_) {
+            showInvalid();
+          }
+          return;
+        }
 
-      const canonical = document.createElement('link');
-      canonical.rel = 'canonical';
-      canonical.href = `https://vane.codearc.studio/alert/${token}`;
-      document.head.appendChild(canonical);
+        const legacyAlertID = decodeUUID(token);
+        if (!legacyAlertID) {
+          showInvalid();
+          return;
+        }
+        setOfficialAlert(legacyAlertID);
+      }
+
+      resolve();
     })();
   </script>
 </body>
