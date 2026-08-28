@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/a/:id",
-      "destination": "/alert/index.html?id=:id"
+      "destination": "/api/alert-page?id=:id"
     },
     {
       "source": "/alert/:id",

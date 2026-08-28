@@ -6,6 +6,7 @@ const CODE_LENGTH = 6;
 const MAX_ATTEMPTS = 8;
 const CODE_PATTERN = /^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{5,7}$/;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const MAX_TEXT = 220;
 
 function sendJSON(response, status, payload) {
   response.status(status);
@@ -24,6 +25,54 @@ function randomCode() {
     code += ALPHABET[bytes[index] % ALPHABET.length];
   }
   return code;
+}
+
+function cleanText(value, fallback = '') {
+  if (typeof value !== 'string') return fallback;
+  return value.replace(/\s+/g, ' ').trim().slice(0, MAX_TEXT);
+}
+
+function cleanOptionalText(value) {
+  const cleaned = cleanText(value);
+  return cleaned || null;
+}
+
+function cleanISODate(value) {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function cleanOfficialURL(value, alertID) {
+  try {
+    const url = new URL(String(value ?? ''));
+    if (url.protocol !== 'https:' || url.hostname !== 'weatherkit.apple.com') return null;
+    const ids = url.searchParams.get('ids') ?? '';
+    const normalizedIDs = ids.split(',').map((item) => item.trim().toLowerCase());
+    if (!normalizedIDs.includes(alertID.toLowerCase())) return null;
+    return url.toString();
+  } catch (_) {
+    return null;
+  }
+}
+
+function recordFromBody(body) {
+  const alertID = String(body?.alertID ?? '').trim().toLowerCase();
+  if (!UUID_PATTERN.test(alertID)) return null;
+
+  const detailsURL = cleanOfficialURL(body?.detailsURL, alertID);
+  if (!detailsURL) return null;
+
+  return {
+    alertID,
+    summary: cleanText(body?.summary, 'Official weather alert'),
+    severity: cleanText(body?.severity, 'Official'),
+    region: cleanOptionalText(body?.region),
+    source: cleanText(body?.source, 'Official weather agency'),
+    issuedAt: cleanISODate(body?.issuedAt),
+    expiresAt: cleanISODate(body?.expiresAt),
+    detailsURL,
+  };
 }
 
 async function exactBlob(pathname) {
@@ -52,37 +101,52 @@ async function findExistingCode(alertID) {
   return mapping?.alertID === alertID ? index.code : null;
 }
 
-async function createMapping(alertID) {
-  const existing = await findExistingCode(alertID);
-  if (existing) return existing;
+async function writeMapping(code, record, createdAt = null) {
+  const payload = JSON.stringify({
+    ...record,
+    code,
+    createdAt: createdAt ?? new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+
+  await put(`alerts/${code}.json`, payload, {
+    access: 'public',
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: 'application/json',
+  });
+}
+
+async function createOrUpdateMapping(record) {
+  const existing = await findExistingCode(record.alertID);
+  if (existing) {
+    let createdAt = null;
+    const oldBlob = await exactBlob(`alerts/${existing}.json`);
+    if (oldBlob) {
+      try {
+        const old = await readJSON(oldBlob);
+        createdAt = cleanISODate(old?.createdAt);
+      } catch (_) {}
+    }
+    await writeMapping(existing, record, createdAt);
+    return existing;
+  }
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
     const code = randomCode();
     const mappingPath = `alerts/${code}.json`;
-
     if (await exactBlob(mappingPath)) continue;
 
-    const payload = JSON.stringify({
-      alertID,
-      createdAt: new Date().toISOString(),
-    });
-
     try {
-      await put(mappingPath, payload, {
-        access: 'public',
-        addRandomSuffix: false,
-        allowOverwrite: false,
-      });
-
-      await put(`alert-ids/${alertID}.json`, JSON.stringify({ code }), {
+      await writeMapping(code, record);
+      await put(`alert-ids/${record.alertID}.json`, JSON.stringify({ code }), {
         access: 'public',
         addRandomSuffix: false,
         allowOverwrite: true,
+        contentType: 'application/json',
       });
-
       return code;
     } catch (error) {
-      // A simultaneous request may have claimed the same short code.
       if (attempt === MAX_ATTEMPTS - 1) throw error;
     }
   }
@@ -103,20 +167,20 @@ export default async function handler(request, response) {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     sendJSON(response, 503, {
       error: 'Short alert links are not configured yet.',
-      setup: 'Connect a Vercel Blob store to this project so BLOB_READ_WRITE_TOKEN is available.',
+      setup: 'Connect a public Vercel Blob store to this project so BLOB_READ_WRITE_TOKEN is available.',
     });
     return;
   }
 
   try {
     if (request.method === 'POST') {
-      const alertID = String(request.body?.alertID ?? '').trim().toLowerCase();
-      if (!UUID_PATTERN.test(alertID)) {
-        sendJSON(response, 400, { error: 'Invalid Apple Weather alert ID.' });
+      const record = recordFromBody(request.body);
+      if (!record) {
+        sendJSON(response, 400, { error: 'Invalid Apple Weather alert data.' });
         return;
       }
 
-      const code = await createMapping(alertID);
+      const code = await createOrUpdateMapping(record);
       sendJSON(response, 200, {
         code,
         url: `https://vane.codearc.studio/a/${code}`,
@@ -146,6 +210,13 @@ export default async function handler(request, response) {
       sendJSON(response, 200, {
         code,
         alertID: mapping.alertID,
+        summary: mapping.summary ?? 'Official weather alert',
+        severity: mapping.severity ?? 'Official',
+        region: mapping.region ?? null,
+        source: mapping.source ?? 'Official weather agency',
+        issuedAt: mapping.issuedAt ?? null,
+        expiresAt: mapping.expiresAt ?? null,
+        detailsURL: mapping.detailsURL ?? null,
       });
       return;
     }

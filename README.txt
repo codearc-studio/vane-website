@@ -10,11 +10,7 @@ Pages:
 - /contact/
 - /privacy/
 - /terms/
-
-Local testing:
-1. cd into the vane-website folder
-2. Run: python3 -m http.server
-3. Open: http://localhost:8000
+- /a/{6-character alert code}
 
 Deploy:
 git add .
@@ -27,13 +23,31 @@ inside your existing Git repository so your Git history and remote stay intact.
 
 SHORT VANE ALERT LINKS
 ----------------------
-Vane now creates six-character alert codes such as:
+Vane creates six-character alert codes such as:
 https://vane.codearc.studio/a/7K2P4Q
 
-The /api/alert Vercel Function stores the short-code-to-Apple-alert-ID mapping in Vercel Blob.
-One-time setup in the Vercel project:
-1. Add/connect a Vercel Blob store.
-2. Make sure BLOB_READ_WRITE_TOKEN is available to Production (Vercel adds this when the store is connected).
-3. Redeploy.
+The iOS app sends the official Apple Weather alert ID plus the alert's title,
+severity, area, issuing agency, issued/end times, and official details URL to
+/api/alert. The function stores that public weather-alert metadata in Vercel Blob.
+The /a/{code} route is rendered server-side so shared links get alert-specific
+text previews without using the Vane homepage OG image.
 
-Until Blob is connected, the iOS app safely falls back to the previous long Vane alert URL.
+One-time Vercel Blob setup:
+1. Open the existing vane-website project in Vercel.
+2. Go to Storage, create/connect a Blob store, and choose PUBLIC access.
+   These records contain only public official weather-alert metadata.
+3. Connect the store to the vane-website project. Vercel should add
+   BLOB_READ_WRITE_TOKEN to the project automatically.
+4. Redeploy the production site.
+
+CLI alternative from the vane-website folder:
+  npx vercel link
+  npx vercel blob create-store vane-alerts --access public --yes
+  npx vercel env pull .env.local
+  npx vercel --prod
+
+Use `vercel dev` for local testing of /api/alert and /a/{code}; a plain
+python3 -m http.server cannot run Vercel Functions.
+
+Until Blob is connected, the iOS app safely falls back to the previous long
+Vane alert URL instead of producing a broken short link.
