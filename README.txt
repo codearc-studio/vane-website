@@ -49,13 +49,18 @@ ONE-TIME VERCEL BLOB SETUP
 --------------------------
 1. Open the existing vane-website project in Vercel.
 2. Go to Storage and create/connect a PRIVATE Blob store.
-3. Connect it to the vane-website project so BLOB_READ_WRITE_TOKEN is available.
-4. Redeploy production.
+3. Connect it to the vane-website project. Current Vercel projects normally use
+   OIDC authentication and expose BLOB_STORE_ID automatically. Older stores may
+   instead expose BLOB_READ_WRITE_TOKEN. This code supports both models.
+4. Redeploy production after connecting the store.
 
 CLI alternative from the vane-website folder:
   npx vercel link
   npx vercel blob create-store vane-alerts --access private --yes
   npx vercel env pull .env.local
+
+Do not manually create a long-lived BLOB_READ_WRITE_TOKEN if Vercel has connected
+the store using OIDC. OIDC is the preferred current setup.
 
 ONE-TIME WEATHERKIT SERVER SETUP
 --------------------------------
@@ -87,6 +92,7 @@ python3 -m http.server cannot run Vercel Functions.
 
 PRIVATE BLOB NOTE
 -----------------
-The alert JSON is only read/written server-side using BLOB_READ_WRITE_TOKEN.
-Shared /a/CODE pages are public web pages, but the underlying Blob records remain
-private.
+The alert JSON is only read/written server-side through the connected private Blob
+store. Vercel OIDC is supported and preferred; legacy BLOB_READ_WRITE_TOKEN auth
+is also supported. Shared /a/CODE pages are public web pages, but the underlying
+Blob records remain private.

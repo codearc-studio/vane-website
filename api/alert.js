@@ -12,6 +12,14 @@ const CODE_LENGTH = 6;
 const MAX_ATTEMPTS = 8;
 const CODE_PATTERN = /^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{5,7}$/;
 
+
+function blobConfigured() {
+  // Vercel Blob supports both the legacy static read/write token and the
+  // current OIDC connection model. New Vercel projects typically expose
+  // BLOB_STORE_ID and authenticate Functions with a short-lived OIDC token.
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
+}
+
 function sendJSON(response, status, payload) {
   response.status(status);
   response.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -160,10 +168,10 @@ export default async function handler(request, response) {
 
   try {
     if (request.method === 'POST') {
-      if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      if (!blobConfigured()) {
         sendJSON(response, 503, {
           error: 'Short alert links are not configured yet.',
-          setup: 'Connect a private Vercel Blob store so BLOB_READ_WRITE_TOKEN is available.',
+          setup: 'Connect a private Vercel Blob store to this project (OIDC/BLOB_STORE_ID or BLOB_READ_WRITE_TOKEN).',
         });
         return;
       }
@@ -220,13 +228,13 @@ export default async function handler(request, response) {
         }
 
         const language = normalizeLanguage(request.query?.lang);
-        const existing = process.env.BLOB_READ_WRITE_TOKEN
+        const existing = blobConfigured()
           ? await findExistingMapping(requestedAlertID)
           : null;
 
         try {
           const official = await fetchOfficialAlert(requestedAlertID, language);
-          if (existing && process.env.BLOB_READ_WRITE_TOKEN) {
+          if (existing && blobConfigured()) {
             await writeMapping(existing.code, official, cleanISODate(existing.record?.createdAt));
           }
           sendJSON(response, 200, publicAlert(official, { code: existing?.code ?? null }));
@@ -240,7 +248,7 @@ export default async function handler(request, response) {
         return;
       }
 
-      if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      if (!blobConfigured()) {
         sendJSON(response, 503, { error: 'Shared alert storage is unavailable.' });
         return;
       }
