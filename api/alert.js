@@ -1,12 +1,16 @@
-import { list, put } from '@vercel/blob';
+import { get, list, put } from '@vercel/blob';
 import { randomBytes } from 'node:crypto';
+import {
+  fetchOfficialAlert,
+  normalizeLanguage,
+  WEATHERKIT_UUID_PATTERN,
+  weatherKitConfigured,
+} from '../lib/weatherkit-alert.js';
 
 const ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 const CODE_LENGTH = 6;
 const MAX_ATTEMPTS = 8;
 const CODE_PATTERN = /^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{5,7}$/;
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const MAX_TEXT = 220;
 
 function sendJSON(response, status, payload) {
   response.status(status);
@@ -27,52 +31,10 @@ function randomCode() {
   return code;
 }
 
-function cleanText(value, fallback = '') {
-  if (typeof value !== 'string') return fallback;
-  return value.replace(/\s+/g, ' ').trim().slice(0, MAX_TEXT);
-}
-
-function cleanOptionalText(value) {
-  const cleaned = cleanText(value);
-  return cleaned || null;
-}
-
 function cleanISODate(value) {
   if (typeof value !== 'string' || !value.trim()) return null;
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
-}
-
-function cleanOfficialURL(value, alertID) {
-  try {
-    const url = new URL(String(value ?? ''));
-    if (url.protocol !== 'https:' || url.hostname !== 'weatherkit.apple.com') return null;
-    const ids = url.searchParams.get('ids') ?? '';
-    const normalizedIDs = ids.split(',').map((item) => item.trim().toLowerCase());
-    if (!normalizedIDs.includes(alertID.toLowerCase())) return null;
-    return url.toString();
-  } catch (_) {
-    return null;
-  }
-}
-
-function recordFromBody(body) {
-  const alertID = String(body?.alertID ?? '').trim().toLowerCase();
-  if (!UUID_PATTERN.test(alertID)) return null;
-
-  const detailsURL = cleanOfficialURL(body?.detailsURL, alertID);
-  if (!detailsURL) return null;
-
-  return {
-    alertID,
-    summary: cleanText(body?.summary, 'Official weather alert'),
-    severity: cleanText(body?.severity, 'Official'),
-    region: cleanOptionalText(body?.region),
-    source: cleanText(body?.source, 'Official weather agency'),
-    issuedAt: cleanISODate(body?.issuedAt),
-    expiresAt: cleanISODate(body?.expiresAt),
-    detailsURL,
-  };
 }
 
 async function exactBlob(pathname) {
@@ -81,24 +43,29 @@ async function exactBlob(pathname) {
 }
 
 async function readJSON(blob) {
-  const result = await fetch(blob.url, { cache: 'no-store' });
-  if (!result.ok) throw new Error(`Blob read failed with ${result.status}`);
-  return result.json();
+  const result = await get(blob.url, { access: 'private' });
+  if (!result) throw new Error('Private Blob read failed');
+  return JSON.parse(await new Response(result.stream).text());
 }
 
-async function findExistingCode(alertID) {
-  const indexPath = `alert-ids/${alertID}.json`;
-  const indexBlob = await exactBlob(indexPath);
+async function readMapping(code) {
+  const blob = await exactBlob(`alerts/${code}.json`);
+  if (!blob) return null;
+  const record = await readJSON(blob);
+  return WEATHERKIT_UUID_PATTERN.test(record?.alertID ?? '') ? record : null;
+}
+
+async function findExistingMapping(alertID) {
+  const indexBlob = await exactBlob(`alert-ids/${alertID}.json`);
   if (!indexBlob) return null;
 
   const index = await readJSON(indexBlob);
-  if (!CODE_PATTERN.test(index?.code ?? '')) return null;
+  const code = String(index?.code ?? '').toUpperCase();
+  if (!CODE_PATTERN.test(code)) return null;
 
-  const mappingBlob = await exactBlob(`alerts/${index.code}.json`);
-  if (!mappingBlob) return null;
-
-  const mapping = await readJSON(mappingBlob);
-  return mapping?.alertID === alertID ? index.code : null;
+  const record = await readMapping(code);
+  if (!record || String(record.alertID).toLowerCase() !== alertID.toLowerCase()) return null;
+  return { code, record };
 }
 
 async function writeMapping(code, record, createdAt = null) {
@@ -110,7 +77,7 @@ async function writeMapping(code, record, createdAt = null) {
   });
 
   await put(`alerts/${code}.json`, payload, {
-    access: 'public',
+    access: 'private',
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: 'application/json',
@@ -118,18 +85,10 @@ async function writeMapping(code, record, createdAt = null) {
 }
 
 async function createOrUpdateMapping(record) {
-  const existing = await findExistingCode(record.alertID);
+  const existing = await findExistingMapping(record.alertID);
   if (existing) {
-    let createdAt = null;
-    const oldBlob = await exactBlob(`alerts/${existing}.json`);
-    if (oldBlob) {
-      try {
-        const old = await readJSON(oldBlob);
-        createdAt = cleanISODate(old?.createdAt);
-      } catch (_) {}
-    }
-    await writeMapping(existing, record, createdAt);
-    return existing;
+    await writeMapping(existing.code, record, cleanISODate(existing.record?.createdAt));
+    return existing.code;
   }
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
@@ -140,7 +99,7 @@ async function createOrUpdateMapping(record) {
     try {
       await writeMapping(code, record);
       await put(`alert-ids/${record.alertID}.json`, JSON.stringify({ code }), {
-        access: 'public',
+        access: 'private',
         addRandomSuffix: false,
         allowOverwrite: true,
         contentType: 'application/json',
@@ -154,6 +113,41 @@ async function createOrUpdateMapping(record) {
   throw new Error('Could not allocate a short alert code');
 }
 
+function publicAlert(record, { code = null, stale = false } = {}) {
+  return {
+    ...(code ? { code } : {}),
+    alertID: record.alertID,
+    summary: record.summary ?? 'Official weather alert',
+    severity: record.severity ?? 'unknown',
+    region: record.region ?? null,
+    source: record.source ?? 'Official weather agency',
+    countryCode: record.countryCode ?? null,
+    certainty: record.certainty ?? 'unknown',
+    urgency: record.urgency ?? 'unknown',
+    responses: Array.isArray(record.responses) ? record.responses : [],
+    issuedAt: record.issuedAt ?? null,
+    effectiveAt: record.effectiveAt ?? null,
+    onsetAt: record.onsetAt ?? null,
+    eventEndAt: record.eventEndAt ?? null,
+    expiresAt: record.expiresAt ?? null,
+    messages: Array.isArray(record.messages) ? record.messages : [],
+    detailsURL: record.detailsURL ?? null,
+    attributionURL: record.attributionURL ?? null,
+    language: record.language ?? 'en-US',
+    verified: record.verified === true,
+    verificationSource: record.verificationSource ?? null,
+    verifiedAt: record.verifiedAt ?? null,
+    stale,
+  };
+}
+
+function weatherKitSetupError(response) {
+  sendJSON(response, 503, {
+    error: 'Official alert verification is not configured yet.',
+    setup: 'Set WEATHERKIT_TEAM_ID, WEATHERKIT_KEY_ID, WEATHERKIT_SERVICE_ID, and WEATHERKIT_PRIVATE_KEY in Vercel.',
+  });
+}
+
 export default async function handler(request, response) {
   if (request.method === 'OPTIONS') {
     response.status(204);
@@ -164,67 +158,122 @@ export default async function handler(request, response) {
     return;
   }
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    sendJSON(response, 503, {
-      error: 'Short alert links are not configured yet.',
-      setup: 'Connect a public Vercel Blob store to this project so BLOB_READ_WRITE_TOKEN is available.',
-    });
-    return;
-  }
-
   try {
     if (request.method === 'POST') {
-      const record = recordFromBody(request.body);
-      if (!record) {
-        sendJSON(response, 400, { error: 'Invalid Apple Weather alert data.' });
+      if (!process.env.BLOB_READ_WRITE_TOKEN) {
+        sendJSON(response, 503, {
+          error: 'Short alert links are not configured yet.',
+          setup: 'Connect a private Vercel Blob store so BLOB_READ_WRITE_TOKEN is available.',
+        });
+        return;
+      }
+      if (!weatherKitConfigured()) {
+        weatherKitSetupError(response);
         return;
       }
 
-      const code = await createOrUpdateMapping(record);
+      // Intentionally accept only identity/localization from the client. Older Vane
+      // builds may still send summary/severity/source/etc.; those fields are ignored.
+      const alertID = String(request.body?.alertID ?? '').trim().toLowerCase();
+      const language = normalizeLanguage(request.body?.language);
+      if (!WEATHERKIT_UUID_PATTERN.test(alertID)) {
+        sendJSON(response, 400, { error: 'Invalid Apple Weather alert ID.' });
+        return;
+      }
+
+      const existing = await findExistingMapping(alertID);
+      let official;
+      try {
+        official = await fetchOfficialAlert(alertID, language);
+      } catch (error) {
+        // Never let a failed/unavailable refresh overwrite a previously verified snapshot.
+        if (existing?.record?.verified === true) {
+          sendJSON(response, 200, {
+            code: existing.code,
+            url: `https://vane.codearc.studio/a/${existing.code}`,
+            alert: publicAlert(existing.record, { code: existing.code, stale: true }),
+          });
+          return;
+        }
+        throw error;
+      }
+
+      const code = await createOrUpdateMapping(official);
       sendJSON(response, 200, {
         code,
         url: `https://vane.codearc.studio/a/${code}`,
+        alert: publicAlert(official, { code }),
       });
       return;
     }
 
     if (request.method === 'GET') {
+      const requestedAlertID = String(request.query?.alertID ?? '').trim().toLowerCase();
+      if (requestedAlertID) {
+        if (!WEATHERKIT_UUID_PATTERN.test(requestedAlertID)) {
+          sendJSON(response, 400, { error: 'Invalid Apple Weather alert ID.' });
+          return;
+        }
+        if (!weatherKitConfigured()) {
+          weatherKitSetupError(response);
+          return;
+        }
+
+        const language = normalizeLanguage(request.query?.lang);
+        const existing = process.env.BLOB_READ_WRITE_TOKEN
+          ? await findExistingMapping(requestedAlertID)
+          : null;
+
+        try {
+          const official = await fetchOfficialAlert(requestedAlertID, language);
+          if (existing && process.env.BLOB_READ_WRITE_TOKEN) {
+            await writeMapping(existing.code, official, cleanISODate(existing.record?.createdAt));
+          }
+          sendJSON(response, 200, publicAlert(official, { code: existing?.code ?? null }));
+        } catch (error) {
+          if (existing?.record?.verified === true) {
+            sendJSON(response, 200, publicAlert(existing.record, { code: existing.code, stale: true }));
+            return;
+          }
+          throw error;
+        }
+        return;
+      }
+
+      if (!process.env.BLOB_READ_WRITE_TOKEN) {
+        sendJSON(response, 503, { error: 'Shared alert storage is unavailable.' });
+        return;
+      }
+
       const code = String(request.query?.id ?? '').trim().toUpperCase();
       if (!CODE_PATTERN.test(code)) {
         sendJSON(response, 400, { error: 'Invalid alert code.' });
         return;
       }
 
-      const blob = await exactBlob(`alerts/${code}.json`);
-      if (!blob) {
+      const mapping = await readMapping(code);
+      if (!mapping) {
         sendJSON(response, 404, { error: 'Alert code not found.' });
         return;
       }
 
-      const mapping = await readJSON(blob);
-      if (!UUID_PATTERN.test(mapping?.alertID ?? '')) {
-        sendJSON(response, 404, { error: 'Alert mapping is unavailable.' });
-        return;
-      }
-
-      sendJSON(response, 200, {
-        code,
-        alertID: mapping.alertID,
-        summary: mapping.summary ?? 'Official weather alert',
-        severity: mapping.severity ?? 'Official',
-        region: mapping.region ?? null,
-        source: mapping.source ?? 'Official weather agency',
-        issuedAt: mapping.issuedAt ?? null,
-        expiresAt: mapping.expiresAt ?? null,
-        detailsURL: mapping.detailsURL ?? null,
-      });
+      sendJSON(response, 200, publicAlert(mapping, { code }));
       return;
     }
 
     response.setHeader('Allow', 'GET, POST, OPTIONS');
     sendJSON(response, 405, { error: 'Method not allowed.' });
   } catch (error) {
-    console.error('Vane alert short-link error:', error);
-    sendJSON(response, 500, { error: 'Could not create or open this alert link.' });
+    console.error('Vane official alert API error:', error);
+    const status = Number(error?.statusCode);
+    if (status === 404 || status === 410) {
+      sendJSON(response, 404, { error: 'This official alert is no longer available from Apple Weather.' });
+      return;
+    }
+    if (status === 401 || status === 403) {
+      sendJSON(response, 502, { error: 'Apple Weather rejected the server alert request. Check the WeatherKit server credentials.' });
+      return;
+    }
+    sendJSON(response, 502, { error: 'Could not verify this official alert with Apple Weather.' });
   }
 }

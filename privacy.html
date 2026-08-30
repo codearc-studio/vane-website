@@ -60,7 +60,7 @@
     <div class="kicker">Legal</div>
     <h1>Privacy Policy</h1>
     <p>Vane is built around personal weather, so privacy matters. This policy explains what information Vane may use, why it is used, and the choices you have.</p>
-    <span class="updated">Last updated August 20, 2026</span>
+    <span class="updated">Last updated August 30, 2026</span>
   </header>
 
   <div class="legalwrap">
@@ -92,11 +92,13 @@
         <li><strong>Saved places</strong>, including the place name, region, coordinates, time zone, ordering, and whether you mark a place as home.</li>
         <li><strong>Current location</strong>, when you allow location access, so Vane can request weather for where you are and determine whether a check-in matches the place whose forecast you are viewing.</li>
         <li><strong>App preferences stored on your device</strong>, such as appearance, units, selected weather location, notification preferences, and similar settings.</li>
+        <li><strong>Shared official-alert request information</strong>, only when you ask Vane to create a short link or load the full alert details, including the official Apple Weather alert identifier and language preference. Vane's server uses that identifier to retrieve the official alert from Apple WeatherKit and may store the resulting public alert content, such as the headline, severity, affected area, issuing source, timing, recommended actions, and agency message, for the shared alert page.</li>
+        <li><strong>Limited service and security metadata</strong> processed by Vane's hosting provider when the short-link service is used, such as IP address, IP-derived city and country, request path, user agent, status, and timing information.</li>
         <li><strong>Support information</strong> you choose to send when you contact CodeArc.studio.</li>
       </ul>
 
       <h2 id="use">How information is used</h2>
-      <p>Vane uses this information to provide forecasts and alerts, personalize weather descriptions through Sense, improve calibration from your check-ins, remember saved places and preferences, sync supported Vane data between your devices, power widgets and Live Activities, and respond to support requests.</p>
+      <p>Vane uses this information to provide forecasts and alerts, personalize weather descriptions through Sense, improve calibration from your check-ins, remember saved places and preferences, sync supported Vane data between your devices, power widgets and Live Activities, create an official-alert short link when you request one, protect and operate that service, and respond to support requests.</p>
 
       <h2 id="location">Location</h2>
       <p>If you grant location permission, Vane uses your device location to load weather for your current area. Coordinates are provided to Apple services as needed to request weather and location information.</p>
@@ -114,13 +116,15 @@
 
       <h2 id="sharing">Sharing and disclosure</h2>
       <p>Vane does not sell your personal information and is not designed for advertising or cross-app tracking. Data may be processed by Apple when required to provide Apple platform services such as weather, maps, location, notifications, and iCloud sync. Information may also be disclosed when required by law, needed to protect users or the service, or as part of a business transfer such as a merger or acquisition.</p>
+      <p>When you load full official-alert details or choose to share an official alert, Vane sends the Apple Weather alert identifier and language preference to a CodeArc service hosted by Vercel. That service retrieves the alert directly from Apple WeatherKit instead of trusting alert text supplied by the app. Shared alert records are kept in private server storage, but the resulting short-link page is public to anyone who has or discovers its code. The request does not include your precise coordinates, Sense profile, weather check-ins, Vane account information, or a Vane device identifier. Vercel may process network and request metadata to deliver, secure, and monitor the service under its own privacy practices.</p>
 
       <h2 id="retention">Data retention and deletion</h2>
       <p>Your Sense profile, check-ins, and saved places remain available to Vane so those features can work and, when iCloud is available, can remain synchronized across your devices. Vane does not maintain a separate CodeArc server-side copy of that private CloudKit data.</p>
+      <p>Official-alert records created for short links remain stored while the shared link is available or until they are removed during service maintenance. Hosting request logs are retained according to the hosting plan and provider's operational policies. To request removal of a shared alert link, send the short link or code to the contact address below.</p>
       <p>In Vane Settings, you can delete your check-in history, reset what Sense has learned, or delete all Vane data. Deletions to synced profile, check-in, and saved-place data are made through the same iCloud-backed store and are intended to propagate to your Vane apps using that private database. Device permissions can be changed separately in system Settings.</p>
 
       <h2 id="choices">Your choices</h2>
-      <p>Check-ins are optional. You can skip them and continue using the basic weather experience. You can manage location and notification permissions through system Settings, manage Vane preferences in the app, remove saved places, delete individual check-ins, use the privacy reset controls in Vane Settings, and contact us with privacy questions or requests.</p>
+      <p>Check-ins and official-alert sharing are optional. You can skip them and continue using the basic weather experience. You can manage location and notification permissions through system Settings, manage Vane preferences in the app, remove saved places, delete individual check-ins, use the privacy reset controls in Vane Settings, and contact us with privacy questions, shared-link removal requests, or other requests.</p>
 
       <h2 id="children">Children's privacy</h2>
       <p>Vane is not intended to knowingly collect personal information from children in a way that requires parental consent under applicable law. If you believe a child has provided personal information improperly, contact us so we can review the request.</p>
