@@ -96,3 +96,30 @@ The alert JSON is only read/written server-side through the connected private Bl
 store. Vercel OIDC is supported and preferred; legacy BLOB_READ_WRITE_TOKEN auth
 is also supported. Shared /a/CODE pages are public web pages, but the underlying
 Blob records remain private.
+
+ALERT RETENTION / AUTOMATIC CLEANUP
+-----------------------------------
+Verified shared alerts are retained for 30 days after their listed expiration or
+expected event end, then become eligible for deletion. Cleanup runs at most once
+per 24 hours and is triggered by successful creation/refresh of a shared alert.
+This means storage does not grow forever, while recently ended links continue to
+work for a useful period. If nobody is sharing alerts, no cleanup run is needed
+because storage is not growing.
+
+The cleanup removes both:
+  alerts/{CODE}.json
+  alert-ids/{APPLE-ALERT-UUID}.json
+
+Optional Vercel environment variable:
+  ALERT_RETENTION_DAYS = 30
+
+If the variable is omitted, 30 days is used. Set another positive whole number to
+change the retention period. Set it to 0 to disable automatic deletion.
+
+AGENCY MESSAGE DISPLAY
+----------------------
+Vane keeps the issuing agency's wording intact but renders it as plain text.
+Standalone Markdown-style markers such as ###, ***, and ___ are removed, and a
+heading such as "### Safety information" is displayed as "Safety information".
+The public alert page always shows the full official agency message; it is not
+collapsed and there is no hide/show control.

@@ -1,4 +1,4 @@
-import { get, list, put } from '@vercel/blob';
+import { del, get, list, put } from '@vercel/blob';
 import { randomBytes } from 'node:crypto';
 import {
   fetchOfficialAlert,
@@ -11,7 +11,18 @@ const ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 const CODE_LENGTH = 6;
 const MAX_ATTEMPTS = 8;
 const CODE_PATTERN = /^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]{5,7}$/;
+const DEFAULT_RETENTION_DAYS = 30;
+const CLEANUP_INTERVAL_MS = 24 * 60 * 60 * 1000;
+const CLEANUP_MARKER_PATH = 'maintenance/alert-cleanup.json';
 
+function alertRetentionDays() {
+  const raw = String(process.env.ALERT_RETENTION_DAYS ?? '').trim();
+  if (!raw) return DEFAULT_RETENTION_DAYS;
+  const value = Number.parseInt(raw, 10);
+  if (!Number.isFinite(value)) return DEFAULT_RETENTION_DAYS;
+  if (value <= 0) return 0;
+  return Math.min(value, 3650);
+}
 
 function blobConfigured() {
   // Vercel Blob supports both the legacy static read/write token and the
@@ -61,6 +72,75 @@ async function readMapping(code) {
   if (!blob) return null;
   const record = await readJSON(blob);
   return WEATHERKIT_UUID_PATTERN.test(record?.alertID ?? '') ? record : null;
+}
+
+function retentionEndDate(record) {
+  const candidate = cleanISODate(record?.expiresAt) ?? cleanISODate(record?.eventEndAt);
+  return candidate ? new Date(candidate) : null;
+}
+
+async function cleanupExpiredAlertsIfDue() {
+  const retentionDays = alertRetentionDays();
+  if (!blobConfigured() || retentionDays === 0) return;
+
+  const markerBlob = await exactBlob(CLEANUP_MARKER_PATH);
+  if (markerBlob) {
+    try {
+      const marker = await readJSON(markerBlob);
+      const lastAttempt = cleanISODate(marker?.lastAttemptAt);
+      if (lastAttempt && Date.now() - new Date(lastAttempt).getTime() < CLEANUP_INTERVAL_MS) {
+        return;
+      }
+    } catch (_) {
+      // A malformed maintenance marker should never block cleanup.
+    }
+  }
+
+  // Write the marker before scanning so concurrent share requests do not all
+  // perform the same maintenance pass.
+  await put(CLEANUP_MARKER_PATH, JSON.stringify({
+    lastAttemptAt: new Date().toISOString(),
+    retentionDays,
+  }), {
+    access: 'private',
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: 'application/json',
+  });
+
+  const cutoff = Date.now() - retentionDays * 24 * 60 * 60 * 1000;
+  let cursor;
+
+  do {
+    const page = await list({
+      prefix: 'alerts/',
+      limit: 100,
+      ...(cursor ? { cursor } : {}),
+    });
+
+    for (let offset = 0; offset < page.blobs.length; offset += 12) {
+      const batch = page.blobs.slice(offset, offset + 12);
+      await Promise.all(batch.map(async (blob) => {
+        try {
+          const record = await readJSON(blob);
+          const endDate = retentionEndDate(record);
+          if (!endDate || endDate.getTime() > cutoff) return;
+
+          const deletes = [blob.url];
+          const alertID = String(record?.alertID ?? '').trim().toLowerCase();
+          if (WEATHERKIT_UUID_PATTERN.test(alertID)) {
+            const indexBlob = await exactBlob(`alert-ids/${alertID}.json`);
+            if (indexBlob) deletes.push(indexBlob.url);
+          }
+          await del(deletes);
+        } catch (error) {
+          console.warn('Vane alert cleanup skipped a record:', blob.pathname, error);
+        }
+      }));
+    }
+
+    cursor = page.hasMore && page.cursor ? page.cursor : undefined;
+  } while (cursor);
 }
 
 async function findExistingMapping(alertID) {
@@ -207,6 +287,11 @@ export default async function handler(request, response) {
       }
 
       const code = await createOrUpdateMapping(official);
+      try {
+        await cleanupExpiredAlertsIfDue();
+      } catch (cleanupError) {
+        console.warn('Vane alert cleanup failed:', cleanupError);
+      }
       sendJSON(response, 200, {
         code,
         url: `https://vane.codearc.studio/a/${code}`,

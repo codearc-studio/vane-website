@@ -1,5 +1,6 @@
 import { get, list, put } from '@vercel/blob';
 import {
+  cleanAgencyMessage,
   fallbackOfficialAlertURL,
   fetchOfficialAlert,
   WEATHERKIT_UUID_PATTERN,
@@ -18,6 +19,10 @@ const RESPONSE_LABELS = {
   allClear: 'The threat is all clear',
   none: 'No specific action recommended',
 };
+
+function blobConfigured() {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
+}
 
 function esc(value) {
   return String(value ?? '')
@@ -43,14 +48,34 @@ function titleCase(value, fallback = '') {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function icon(name, className = 'icon') {
+  const paths = {
+    shield: '<path d="M12 3 5.5 5.7v5.1c0 4.6 2.7 8 6.5 10.2 3.8-2.2 6.5-5.6 6.5-10.2V5.7L12 3Z"/><path d="m9.3 12 1.7 1.7 3.9-4"/>',
+    location: '<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.3"/>',
+    building: '<path d="M4 20h16M6 17V9m4 8V9m4 8V9m4 8V9M4 7l8-4 8 4H4Z"/>',
+    severity: '<path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v4.8M12 17.1v.1"/>',
+    certainty: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>',
+    urgency: '<path d="M13 2 5.7 13h5.1L10 22l8.3-12h-5.2L13 2Z"/>',
+    calendar: '<rect x="3.5" y="5.5" width="17" height="15" rx="2.5"/><path d="M7.5 3v5M16.5 3v5M3.5 10h17"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.4 2"/>',
+    onset: '<path d="M3 15h4l2.2-6 4 10 2.2-7H21"/>',
+    hourglass: '<path d="M7 3h10M7 21h10M8 3c0 4 1.5 6 4 9-2.5 3-4 5-4 9m8-18c0 4-1.5 6-4 9 2.5 3 4 5 4 9"/>',
+    action: '<path d="M12 3 5.5 5.7v5.1c0 4.6 2.7 8 6.5 10.2 3.8-2.2 6.5-5.6 6.5-10.2V5.7L12 3Z"/><path d="m8.8 12.2 2 2 4.4-4.7"/>',
+    message: '<path d="M5 3.5h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 3v-15a2 2 0 0 1 2-2Z"/><path d="M8 8h8M8 12h6"/>',
+    source: '<path d="M4 20h16M6 17V9m4 8V9m4 8V9m4 8V9M4 7l8-4 8 4H4Z"/>',
+    external: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5"/>',
+    vane: '<path d="M4 12h16M12 4l5 8-5 8-5-8 5-8Z"/>',
+  };
+  const path = paths[name] ?? paths.shield;
+  return `<svg class="${esc(className)}" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+}
+
 function safeOfficialURL(value, alertID, verified) {
   try {
     const url = new URL(String(value ?? ''));
     if (url.protocol !== 'https:') return null;
     if (verified) return url.toString();
 
-    // Legacy records were client-authored. Only trust the Apple Weather URL shape
-    // the old API already validated, never a newly supplied destination.
     if (url.hostname !== 'weatherkit.apple.com') return null;
     const ids = (url.searchParams.get('ids') ?? '').split(',').map((item) => item.trim().toLowerCase());
     return ids.includes(alertID.toLowerCase()) ? url.toString() : null;
@@ -93,9 +118,6 @@ async function upgradeLegacyRecord(code, record) {
     });
     return upgraded;
   } catch (_) {
-    // The official detail endpoint only serves active alerts. If this legacy alert
-    // has ended or Apple is temporarily unavailable, keep the old snapshot but do
-    // not relabel it as verified.
     return record;
   }
 }
@@ -107,7 +129,7 @@ function preferredMessage(record) {
   const baseLanguage = language.split('-')[0];
   const exact = messages.find((message) => String(message?.language ?? '').toLowerCase() === language);
   const base = messages.find((message) => String(message?.language ?? '').toLowerCase().split('-')[0] === baseLanguage);
-  return String((exact ?? base ?? messages[0])?.text ?? '').trim();
+  return cleanAgencyMessage(String((exact ?? base ?? messages[0])?.text ?? ''));
 }
 
 function responseCards(record) {
@@ -116,17 +138,19 @@ function responseCards(record) {
   const finalValues = useful.length ? useful : values.filter((value) => RESPONSE_LABELS[value]);
   if (!finalValues.length) return '';
 
-  return `<section class="card action-card">
-    <div class="section-kicker">Recommended action</div>
-    <h2>${finalValues.length === 1 ? esc(RESPONSE_LABELS[finalValues[0]]) : 'Follow the reporting agency’s recommended actions'}</h2>
-    ${finalValues.length > 1 ? `<div class="action-list">${finalValues.map((value) => `<div class="action-pill">${esc(RESPONSE_LABELS[value])}</div>`).join('')}</div>` : ''}
+  return `<section class="card content-card action-card">
+    <div class="section-head">
+      <div class="section-icon action-icon">${icon('action')}</div>
+      <div><div class="section-kicker">Recommended action</div><h2>${finalValues.length === 1 ? esc(RESPONSE_LABELS[finalValues[0]]) : 'Follow the reporting agency’s recommended actions'}</h2></div>
+    </div>
+    ${finalValues.length > 1 ? `<div class="action-list">${finalValues.map((value) => `<div class="action-pill">${icon('action', 'mini-icon')}<span>${esc(RESPONSE_LABELS[value])}</span></div>`).join('')}</div>` : ''}
     <p>These actions come from the reporting agency data supplied through Apple Weather.</p>
   </section>`;
 }
 
-function fact(label, value, date = false) {
+function fact(label, value, iconName, date = false) {
   if (!value) return '';
-  return `<div class="fact"><div class="fact-label">${esc(label)}</div><div class="fact-value${date ? ' local-time' : ''}"${date ? ` data-date="${esc(value)}"` : ''}>${esc(date ? new Date(value).toUTCString() : value)}</div></div>`;
+  return `<div class="fact"><div class="fact-icon">${icon(iconName)}</div><div class="fact-copy"><div class="fact-label">${esc(label)}</div><div class="fact-value${date ? ' local-time' : ''}"${date ? ` data-date="${esc(value)}"` : ''}>${esc(date ? new Date(value).toUTCString() : value)}</div></div></div>`;
 }
 
 function pageShell({ code, record }) {
@@ -178,16 +202,15 @@ function pageShell({ code, record }) {
   <style>
     :root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,system-ui,sans-serif;background:#081725;color:#f8fbff}
     *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 16% 3%,rgba(72,155,247,.30),transparent 29rem),radial-gradient(circle at 93% 22%,rgba(153,211,255,.14),transparent 26rem),linear-gradient(155deg,#071421 0%,#0b2238 54%,#12385b 100%);color:#f8fbff}
-    main{width:min(92vw,760px);margin:0 auto;padding:34px 0 58px}.brand{display:flex;align-items:center;gap:10px;margin:0 4px 22px;font-weight:720;letter-spacing:-.02em}.brand img{width:34px;height:34px;object-fit:contain}
-    .card{border:1px solid rgba(255,255,255,.16);border-radius:32px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.065));box-shadow:0 28px 88px rgba(0,0,0,.25);backdrop-filter:blur(28px) saturate(135%);-webkit-backdrop-filter:blur(28px) saturate(135%)}
+    main{width:min(92vw,780px);margin:0 auto;padding:34px 0 58px}.brand{display:flex;align-items:center;gap:10px;margin:0 4px 22px;font-weight:720;letter-spacing:-.02em}.brand img{width:34px;height:34px;object-fit:contain}
+    .icon{width:20px;height:20px;display:block}.mini-icon{width:14px;height:14px;display:block;flex:0 0 auto}.card{border:1px solid rgba(255,255,255,.16);border-radius:32px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.065));box-shadow:0 28px 88px rgba(0,0,0,.25);backdrop-filter:blur(28px) saturate(135%);-webkit-backdrop-filter:blur(28px) saturate(135%)}
     .hero{padding:30px}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.eyebrow{font-size:12px;font-weight:760;letter-spacing:.09em;text-transform:uppercase;color:rgba(230,241,252,.68)}.status{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid rgba(255,255,255,.15);border-radius:999px;background:rgba(255,255,255,.07);font-size:12px;font-weight:700}.status-dot{width:7px;height:7px;border-radius:50%;background:${active ? '#78c7ff' : '#a9b4c1'}}
-    h1{margin:22px 0 0;font-size:clamp(36px,8vw,60px);line-height:1.01;letter-spacing:-.048em}.agency{margin:16px 0 0;font-size:16px;line-height:1.55;color:rgba(235,244,253,.74)}.agency strong{color:#fff}.integrity{display:inline-flex;align-items:center;gap:7px;margin-top:18px;padding:8px 11px;border-radius:999px;background:${verified ? 'rgba(105,195,255,.11)' : 'rgba(255,198,102,.10)'};border:1px solid ${verified ? 'rgba(133,207,255,.18)' : 'rgba(255,205,120,.18)'};color:${verified ? '#c8e8ff' : '#f3d7a5'};font-size:12px;font-weight:700}
-    .facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin-top:15px;overflow:hidden}.fact{padding:18px 20px;background:rgba(255,255,255,.065)}.fact-label,.section-kicker{font-size:11px;font-weight:740;letter-spacing:.07em;text-transform:uppercase;color:rgba(224,238,252,.52)}.fact-value{margin-top:6px;font-size:15px;font-weight:650;line-height:1.4}
-    .action-card,.message-card,.guidance{margin-top:15px;padding:24px}.action-card h2,.message-card h2,.guidance h2{margin:7px 0 0;font-size:21px;letter-spacing:-.025em}.action-card p,.guidance p{margin:9px 0 0;color:rgba(235,244,253,.68);line-height:1.58}.action-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.action-pill{padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.12);font-size:13px;font-weight:650}
-    .message{margin:16px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;color:rgba(244,249,255,.84);font-size:15px;line-height:1.62}.message-card details{margin-top:4px}.message-card summary{cursor:pointer;list-style:none}.message-card summary::-webkit-details-marker{display:none}.message-card summary::after{content:'Show full agency message';display:block;margin-top:14px;color:#b9dcfb;font-size:13px;font-weight:700}.message-card details[open] summary::after{content:'Hide agency message'}
-    .actions{display:grid;gap:10px;margin-top:16px}.button{min-height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:0 18px;text-decoration:none;font-weight:720;letter-spacing:-.01em}.primary{color:#061321;background:linear-gradient(135deg,#f8fbff,#b8dcff);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 14px 34px rgba(48,139,238,.18)}.secondary{color:#f5f9ff;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.065)}
+    h1{margin:22px 0 0;font-size:clamp(36px,8vw,60px);line-height:1.01;letter-spacing:-.048em}.agency{margin:16px 0 0;font-size:16px;line-height:1.55;color:rgba(235,244,253,.74)}.agency strong{color:#fff}.integrity{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:9px 12px;border-radius:999px;background:${verified ? 'rgba(105,195,255,.11)' : 'rgba(255,198,102,.10)'};border:1px solid ${verified ? 'rgba(133,207,255,.18)' : 'rgba(255,205,120,.18)'};color:${verified ? '#c8e8ff' : '#f3d7a5'};font-size:12px;font-weight:700}.integrity .icon{width:16px;height:16px}
+    .facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin-top:15px;overflow:hidden}.fact{display:flex;align-items:flex-start;gap:13px;padding:18px 20px;background:rgba(255,255,255,.058)}.fact-icon,.section-icon{display:grid;place-items:center;flex:0 0 auto;width:40px;height:40px;border-radius:13px;background:rgba(131,201,255,.10);border:1px solid rgba(151,211,255,.13);color:#c4e6ff}.fact-copy{min-width:0}.fact-label,.section-kicker{font-size:11px;font-weight:740;letter-spacing:.07em;text-transform:uppercase;color:rgba(224,238,252,.52)}.fact-value{margin-top:5px;font-size:15px;font-weight:650;line-height:1.4;overflow-wrap:anywhere}
+    .content-card{margin-top:15px;padding:24px}.section-head{display:flex;align-items:center;gap:14px}.section-head h2{margin:5px 0 0;font-size:21px;letter-spacing:-.025em}.section-icon{width:44px;height:44px;border-radius:14px}.section-icon .icon{width:22px;height:22px}.action-icon{background:rgba(113,205,255,.12);color:#cbeaff}.content-card p{margin:14px 0 0;color:rgba(235,244,253,.68);line-height:1.58}.action-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.action-pill{display:flex;align-items:center;gap:7px;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.12);font-size:13px;font-weight:650}.message{margin:18px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;color:rgba(244,249,255,.86);font-size:15px;line-height:1.68}.message-card .section-icon{background:rgba(183,157,255,.10);color:#ded0ff}.guidance .section-icon{background:rgba(122,211,182,.10);color:#c4f1e2}
+    .actions{display:grid;gap:10px;margin-top:18px}.button{min-height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;gap:9px;padding:0 18px;text-decoration:none;font-weight:720;letter-spacing:-.01em}.button .icon{width:18px;height:18px}.primary{color:#061321;background:linear-gradient(135deg,#f8fbff,#b8dcff);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 14px 34px rgba(48,139,238,.18)}.secondary{color:#f5f9ff;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.065)}
     .source-note{margin:15px 4px 0;color:rgba(224,238,252,.48);font-size:12px;line-height:1.55}.code{font-variant-numeric:tabular-nums;font-weight:700}.legacy-warning{margin-top:15px;padding:18px 20px;border-radius:24px;border:1px solid rgba(255,205,120,.15);background:rgba(255,196,92,.06);color:rgba(245,225,188,.76);font-size:13px;line-height:1.55}
-    @media(max-width:560px){main{padding:20px 0 40px}.hero{padding:23px}.card{border-radius:27px}.facts{grid-template-columns:1fr}.action-card,.message-card,.guidance{padding:21px}h1{font-size:clamp(34px,11vw,49px)}}
+    @media(max-width:560px){main{padding:20px 0 40px}.hero{padding:23px}.card{border-radius:27px}.facts{grid-template-columns:1fr}.content-card{padding:21px}h1{font-size:clamp(34px,11vw,49px)}.fact-icon{width:37px;height:37px;border-radius:12px}}
   </style>
 </head>
 <body>
@@ -197,35 +220,34 @@ function pageShell({ code, record }) {
     <section class="card hero">
       <div class="topline"><div class="eyebrow">${verified ? 'Official weather alert' : 'Weather alert snapshot'}</div><div class="status"><span class="status-dot"></span>${statusText}</div></div>
       <h1>${esc(summary)}</h1>
-      <p class="agency">${verified ? `Official alert issued by <strong>${esc(source)}</strong>${region ? ` for ${esc(region)}` : ''}.` : `This alert information was saved by an older version of Vane. Use the official source below for authoritative details and updates.`}</p>
-      <div class="integrity">${verified ? '✓' : '!' } ${esc(integrityLabel)}</div>
+      <p class="agency">${verified ? `Official alert issued by <strong>${esc(source)}</strong>${region ? ` for ${esc(region)}` : ''}.` : 'This alert information was saved by an older version of Vane. Use the official source below for authoritative details and updates.'}</p>
+      <div class="integrity">${icon(verified ? 'shield' : 'severity')}<span>${esc(integrityLabel)}</span></div>
     </section>
 
     <section class="card facts" aria-label="Alert details">
-      ${region ? fact('Area', region) : ''}
-      ${fact('Severity', severity)}
-      ${certainty ? fact('Certainty', certainty) : ''}
-      ${urgency ? fact('Urgency', urgency) : ''}
-      ${issuedAt ? fact('Issued', issuedAt, true) : ''}
-      ${effectiveAt && effectiveAt !== issuedAt ? fact('Effective', effectiveAt, true) : ''}
-      ${onsetAt ? fact('Event onset', onsetAt, true) : ''}
-      ${eventEndAt ? fact('Expected event end', eventEndAt, true) : ''}
-      ${expiresAt ? fact(active ? 'Alert valid until' : 'Alert expired', expiresAt, true) : ''}
+      ${region ? fact('Area', region, 'location') : ''}
+      ${fact('Severity', severity, 'severity')}
+      ${certainty ? fact('Certainty', certainty, 'certainty') : ''}
+      ${urgency ? fact('Urgency', urgency, 'urgency') : ''}
+      ${issuedAt ? fact('Issued', issuedAt, 'calendar', true) : ''}
+      ${effectiveAt && effectiveAt !== issuedAt ? fact('Effective', effectiveAt, 'clock', true) : ''}
+      ${onsetAt ? fact('Event onset', onsetAt, 'onset', true) : ''}
+      ${eventEndAt ? fact('Expected event end', eventEndAt, 'hourglass', true) : ''}
+      ${expiresAt ? fact(active ? 'Alert valid until' : 'Alert expired', expiresAt, 'clock', true) : ''}
     </section>
 
     ${verified ? responseCards(record) : ''}
 
-    ${message ? `<section class="card message-card"><div class="section-kicker">Official agency message</div><h2>Full alert description</h2><details><summary></summary><div class="message">${esc(message)}</div></details></section>` : ''}
+    ${message ? `<section class="card content-card message-card"><div class="section-head"><div class="section-icon">${icon('message')}</div><div><div class="section-kicker">Official agency message</div><h2>Full alert description</h2></div></div><div class="message">${esc(message)}</div></section>` : ''}
 
     ${!verified ? `<div class="legacy-warning"><strong>Legacy snapshot:</strong> Vane cannot independently verify the saved title, severity, area, or timing for this older link. Newly shared alerts are rebuilt directly from Apple WeatherKit on Vane’s server.</div>` : ''}
 
-    <section class="card guidance">
-      <div class="section-kicker">Source of truth</div>
-      <h2>Check the issuing agency’s current alert</h2>
+    <section class="card content-card guidance">
+      <div class="section-head"><div class="section-icon">${icon('source')}</div><div><div class="section-kicker">Source of truth</div><h2>Check the issuing agency’s current alert</h2></div></div>
       <p>${verified ? 'Vane displays the official alert data returned by Apple WeatherKit. The issuing agency’s source remains authoritative for live changes and safety instructions.' : 'Open the official Apple Weather alert before making safety decisions.'}</p>
       <div class="actions">
-        <a class="button primary" href="${esc(officialURL)}" rel="noopener noreferrer">View official alert source</a>
-        <a class="button secondary" href="https://vane.codearc.studio/">About Vane</a>
+        <a class="button primary" href="${esc(officialURL)}" rel="noopener noreferrer">${icon('external')}<span>View official alert source</span></a>
+        <a class="button secondary" href="https://vane.codearc.studio/">${icon('vane')}<span>About Vane</span></a>
       </div>
     </section>
 
@@ -252,7 +274,7 @@ export default async function handler(request, response) {
   response.setHeader('Content-Type', 'text/html; charset=utf-8');
   response.setHeader('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
 
-  if (!CODE_PATTERN.test(code) || !process.env.BLOB_READ_WRITE_TOKEN) {
+  if (!CODE_PATTERN.test(code) || !blobConfigured()) {
     response.status(404).send(invalidPage(code));
     return;
   }
