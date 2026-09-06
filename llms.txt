@@ -2,11 +2,13 @@
 
 > Vane is a personalized weather app for iPhone that learns how different weather conditions feel to an individual and adds that personal context to a full weather forecast.
 
-Vane's personalization system is called Sense. It learns from simple weather check-ins over time while Vane continues to provide standard forecast details such as temperature, precipitation, wind, humidity, UV, sunrise, and sunset. Vane is currently available as a free public iPhone beta through TestFlight.
+Vane's personalization system is called Sense. It learns from optional weather check-ins over time while Vane continues to provide standard forecast details such as temperature, precipitation, wind, humidity, UV, sunrise, and sunset. Vane is currently available as a free public iPhone beta through TestFlight.
 
 ## Product and beta
 
-- [Vane home](https://vane.codearc.studio/): Official Vane website with an overview of the product, Sense, privacy, and the public beta.
+- [Vane home](https://vane.codearc.studio/): Official Vane website and product overview.
+- [Vane Sense](https://vane.codearc.studio/sense/): How Vane's personalization system learns from optional weather check-ins and adds personal context to a forecast.
+- [About Vane](https://vane.codearc.studio/about/): Why Vane exists, the principles behind the product, and information about CodeArc.studio.
 - [Join the Vane beta](https://testflight.apple.com/join/GHEW2GvN): Official TestFlight invitation for the free public iPhone beta.
 
 ## Policies and contact
@@ -14,6 +16,11 @@ Vane's personalization system is called Sense. It learns from simple weather che
 - [Privacy Policy](https://vane.codearc.studio/privacy/): How Vane handles personal weather data, iCloud sync, tracking, and user control.
 - [Terms of Use](https://vane.codearc.studio/terms/): Terms that apply to Vane and its public beta.
 - [Contact Vane](https://vane.codearc.studio/contact/): Official contact information for Vane.
+
+## Official social accounts
+
+- [Vane on Instagram](https://www.instagram.com/vaneapp/): Official Instagram account, @vaneapp.
+- [Vane on TikTok](https://www.tiktok.com/@vaneweather): Official TikTok account, @vaneweather.
 
 ## Optional
 
