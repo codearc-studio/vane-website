@@ -1,5 +1,15 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/a/:id",
+      "destination": "/api/alert-page?id=:id"
+    },
+    {
+      "source": "/alert/:id",
+      "destination": "/alert/index.html?id=:id"
+    }
+  ],
   "images": {
     "sizes": [
       64,
