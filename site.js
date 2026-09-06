@@ -11,20 +11,38 @@ if (reduce) {
       io.unobserve(entry.target);
     });
   }, { threshold: .1 });
+
   reveal.forEach(el => io.observe(el));
 }
 
 const scrollProgress = document.querySelector('.scroll-progress');
 
 if (scrollProgress) {
-  const updateScrollProgress = () => {
-    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = scrollable > 0 ? Math.min(Math.max(window.scrollY / scrollable, 0), 1) : 0;
+  let scrollable = 1;
+  let framePending = false;
+
+  const paintScrollProgress = () => {
+    const progress = Math.min(Math.max(window.scrollY / scrollable, 0), 1);
     scrollProgress.style.transform = `scaleX(${progress})`;
+    framePending = false;
   };
 
-  updateScrollProgress();
-  window.addEventListener('scroll', updateScrollProgress, { passive: true });
-  window.addEventListener('resize', updateScrollProgress);
-}
+  const requestScrollProgressPaint = () => {
+    if (framePending) return;
+    framePending = true;
+    requestAnimationFrame(paintScrollProgress);
+  };
 
+  const measureScrollRange = () => {
+    scrollable = Math.max(
+      document.documentElement.scrollHeight - window.innerHeight,
+      1
+    );
+    requestScrollProgressPaint();
+  };
+
+  measureScrollRange();
+  window.addEventListener('scroll', requestScrollProgressPaint, { passive: true });
+  window.addEventListener('resize', measureScrollRange, { passive: true });
+  window.addEventListener('load', measureScrollRange, { once: true });
+}

@@ -1,0 +1,27 @@
+# Vane
+
+Vane is a personalized weather app for iPhone. It learns how different weather conditions feel to an individual and adds that personal context to a full weather forecast.
+
+Official website: https://vane.codearc.studio/
+
+## Main pages
+
+- Home: https://vane.codearc.studio/
+- Contact: https://vane.codearc.studio/contact/
+- Privacy Policy: https://vane.codearc.studio/privacy/
+- Terms of Use: https://vane.codearc.studio/terms/
+
+## Product
+
+Vane includes Sense, a personalization system that learns from simple weather check-ins over time. Vane still provides standard forecast details such as temperature, rain, wind, humidity, UV, sunrise, and sunset.
+
+## Public beta
+
+The Vane public iPhone beta is available through TestFlight:
+https://testflight.apple.com/join/GHEW2GvN
+
+## Brand
+
+Official product name: Vane
+Also referred to as: Vane Weather
+Created by: CodeArc.studio
