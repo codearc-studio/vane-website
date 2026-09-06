@@ -1,27 +1,20 @@
 # Vane
 
-Vane is a personalized weather app for iPhone. It learns how different weather conditions feel to an individual and adds that personal context to a full weather forecast.
+> Vane is a personalized weather app for iPhone that learns how different weather conditions feel to an individual and adds that personal context to a full weather forecast.
 
-Official website: https://vane.codearc.studio/
+Vane's personalization system is called Sense. It learns from simple weather check-ins over time while Vane continues to provide standard forecast details such as temperature, precipitation, wind, humidity, UV, sunrise, and sunset. Vane is currently available as a free public iPhone beta through TestFlight.
 
-## Main pages
+## Product and beta
 
-- Home: https://vane.codearc.studio/
-- Contact: https://vane.codearc.studio/contact/
-- Privacy Policy: https://vane.codearc.studio/privacy/
-- Terms of Use: https://vane.codearc.studio/terms/
+- [Vane home](https://vane.codearc.studio/): Official Vane website with an overview of the product, Sense, privacy, and the public beta.
+- [Join the Vane beta](https://testflight.apple.com/join/GHEW2GvN): Official TestFlight invitation for the free public iPhone beta.
 
-## Product
+## Policies and contact
 
-Vane includes Sense, a personalization system that learns from simple weather check-ins over time. Vane still provides standard forecast details such as temperature, rain, wind, humidity, UV, sunrise, and sunset.
+- [Privacy Policy](https://vane.codearc.studio/privacy/): How Vane handles personal weather data, iCloud sync, tracking, and user control.
+- [Terms of Use](https://vane.codearc.studio/terms/): Terms that apply to Vane and its public beta.
+- [Contact Vane](https://vane.codearc.studio/contact/): Official contact information for Vane.
 
-## Public beta
+## Optional
 
-The Vane public iPhone beta is available through TestFlight:
-https://testflight.apple.com/join/GHEW2GvN
-
-## Brand
-
-Official product name: Vane
-Also referred to as: Vane Weather
-Created by: CodeArc.studio
+- [CodeArc.studio](https://codearc.studio/): The studio that created Vane.
